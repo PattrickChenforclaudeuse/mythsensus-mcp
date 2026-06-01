@@ -1,0 +1,32 @@
+MIT License
+
+Copyright (c) 2026 Pattrick (Mythsensus) and contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+ENGINE NOTE: The compiled JavaScript engine bundled at src/engine/calc.js and
+src/engine/report.js originates from the closed-source Mythsensus TypeScript
+source code (planned for open-source publication Q3-Q4 2026 alongside the v2
+engine release). The compiled engine code is what mythsensus.com serves to
+every browser visitor and is therefore already publicly available; bundling
+it here adds no incremental disclosure. This MCP wrapper code (everything in
+src/index.ts and src/tools/) is fully MIT-licensed; the bundled compiled
+engine is subject to the same MIT terms for use in this MCP package only.

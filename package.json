@@ -1,0 +1,60 @@
+{
+  "name": "mythsensus-mcp",
+  "version": "0.1.0",
+  "description": "MCP server exposing the Mythsensus engine — calculate Cosmic Score across 26 ancient divination algorithms (BaZi, Vedic, Western, Nine Star Ki, Mayan, Norse Runes, Thai Seven Number, and more) deterministically, client-side, from a birth date.",
+  "main": "dist/index.js",
+  "bin": {
+    "mythsensus-mcp": "dist/index.js"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').cpSync('src/engine','dist/engine',{recursive:true})\"",
+    "watch": "tsc --watch",
+    "start": "node dist/index.js",
+    "test": "node test/smoke.test.cjs",
+    "prepublishOnly": "npm run build"
+  },
+  "files": [
+    "dist/",
+    "src/engine/",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "claude",
+    "astrology",
+    "divination",
+    "bazi",
+    "vedic",
+    "jyotish",
+    "horoscope",
+    "cosmic-score",
+    "mythsensus",
+    "anthropic"
+  ],
+  "author": "Pattrick (Mythsensus founder) <garsell@hotmail.com>",
+  "contributors": [
+    "Claude (AI assistant · Anthropic) <noreply@anthropic.com>"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PattrickChenforclaudeuse/mythsensus-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PattrickChenforclaudeuse/mythsensus-mcp/issues"
+  },
+  "homepage": "https://mythsensus.com",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

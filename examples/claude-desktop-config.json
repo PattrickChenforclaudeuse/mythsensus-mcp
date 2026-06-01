@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "mythsensus": {
+      "command": "mythsensus-mcp"
+    }
+  }
+}

@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build TypeScript
+        run: npm run build
+
+      - name: Run smoke tests
+        run: npm test
+
+      - name: Verify MCP server starts and responds to JSON-RPC
+        run: |
+          node -e "
+          const { spawn } = require('child_process');
+          const p = spawn('node', ['dist/index.js'], { stdio: ['pipe', 'pipe', 'pipe'] });
+          let out = '';
+          p.stdout.on('data', d => out += d);
+          const init = {jsonrpc:'2.0', id:1, method:'initialize', params:{protocolVersion:'2024-11-05', capabilities:{}, clientInfo:{name:'ci',version:'1.0'}}};
+          p.stdin.write(JSON.stringify(init) + '\n');
+          setTimeout(() => {
+            const list = {jsonrpc:'2.0', id:2, method:'tools/list', params:{}};
+            p.stdin.write(JSON.stringify(list) + '\n');
+          }, 200);
+          setTimeout(() => {
+            p.kill();
+            if (!out.includes('mythsensus-mcp')) { console.error('FAIL: no serverInfo'); process.exit(1); }
+            if (!out.includes('calculate_cosmic_score')) { console.error('FAIL: missing tool'); process.exit(1); }
+            if (!out.includes('list_26_systems')) { console.error('FAIL: missing tool'); process.exit(1); }
+            console.log('CI MCP smoke test passed');
+          }, 800);
+          "
