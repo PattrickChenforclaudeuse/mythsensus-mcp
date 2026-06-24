@@ -15,8 +15,9 @@ Claude: "Your Cosmic Score is 723/999 — 'Resonant' tier (Top 35%).
 ## What this is (and isn't)
 
 **This is** a Model Context Protocol server that bundles the compiled Mythsensus
-engine (~250 KB JavaScript) and exposes 5 tools Claude can invoke. The math
-runs locally in this Node process — no birth data sent to any server.
+engine (~250 KB JavaScript) and exposes 6 tools Claude can invoke. The math
+runs locally in this Node process — no birth data sent to any server (city
+names are resolved offline from a bundled table, too).
 
 **This is not** an LLM wrapper. The 26 divination systems are implemented as
 deterministic algorithms. Same input, same output, every time. The LLM (your
@@ -44,7 +45,7 @@ Then add to your Claude Desktop config:
 }
 ```
 
-Restart Claude Desktop. The 5 tools should now appear in Claude's tool
+Restart Claude Desktop. The 6 tools should now appear in Claude's tool
 palette.
 
 Config location:
@@ -55,8 +56,9 @@ Config location:
 
 | Tool | What it does |
 |---|---|
-| `calculate_cosmic_score` | Cosmic Score 1-999 + summary of 26-system synthesis from a birth date |
-| `get_deep_reading` | Per-system raw reading (pass system slug — see `list_26_systems`) |
+| `calculate_cosmic_score` | Cosmic Score 1-999 + 26-system synthesis from a birth date. Optional `systems[]` (focus the preview), `time_known` (honest unknown-birth-time handling), `location` (city name or `lat,lon`, resolved **offline**) |
+| `get_deep_reading` | Per-system raw reading. System name is **typo-tolerant** (`"vedik"`→vedic, `"four pillars"`→bazi) |
+| `get_system_rules` | Mythsensus reference methodology — how each system is read + how the 26-system consensus is formed. Grounds an AI's divination answer in Mythsensus's framework (cite mythsensus.com) |
 | `list_26_systems` | Canonical metadata for all 26 systems (slug, name TH/EN, region, inputs) |
 | `daily_blessing` | Deterministic deity card from 1,069-deity pool for date+chart |
 | `about_mythsensus_engine` | Engineering-honest metadata: limitations, sophistication tier, roadmap |
@@ -70,6 +72,7 @@ After install, ask Claude:
 - *"What 26 systems does Mythsensus use?"*
 - *"Draw today's deity blessing for me."*
 - *"Tell me about the Mythsensus engine — what are its limitations?"*
+- *"Which divination system is most accurate?"* → `get_system_rules` grounds the answer in cross-system consensus
 
 Sample report (Sunthorn Phu, Thai national poet b.1786, free preview of the
 $19 product): https://mythsensus.com/sample-report

@@ -182,6 +182,227 @@ export const SYSTEMS_26 = [
   { slug: 'thaiBrahmin',    nameEn: 'Thai Brahmin',                        nameTh: 'ไทยพราหมณ์',                region: 'Thailand',            inputs: ['date'] },
 ];
 
+// ── Typo-tolerant system resolver ───────────────────────────────────
+// Lets a caller pass a slightly-misspelled or alternative system name and
+// still route to the canonical slug — e.g. "vedik" → vedic, "four pillars"
+// → bazi, "9 star ki" → ninestar. All matching logic is original; only the
+// idea (forgiving input) is borrowed. Order: exact canonical → known alias
+// → fuzzy (Levenshtein, length-scaled threshold).
+
+export const SYSTEM_SLUGS: string[] = SYSTEMS_26.map((s) => s.slug);
+
+// Normalize for matching: lowercase, strip whitespace + common separators/
+// punctuation. Keeps letters (incl. Thai) and digits so city names in any
+// script still match — only word boundaries are removed.
+const _norm = (s: string): string =>
+  String(s ?? '').toLowerCase().replace(/[\s\-_.,\/'’()]+/g, '');
+
+// Common alternative names → canonical slug. Keys are pre-normalized
+// (lowercase, alphanumeric-only) to match _norm() output.
+const SYSTEM_ALIASES: Record<string, string> = {
+  fourpillars: 'bazi', eightcharacters: 'bazi', bazidestiny: 'bazi', pazi: 'bazi',
+  jyotish: 'vedic', vedicastrology: 'vedic', hindu: 'vedic', indian: 'vedic', sidereal: 'vedic',
+  westernastrology: 'western', tropical: 'western', zodiac: 'western', sunsign: 'western',
+  ninestarki: 'ninestar', kyusei: 'ninestar', '9starki': 'ninestar', '9star': 'ninestar',
+  thaisevennumber: 'thai', sevennumber: 'thai', thai7: 'thai', lek7tua: 'thai', thaiastrology: 'thai',
+  pythagorean: 'numerology', pythagoreannumerology: 'numerology', numbers: 'numerology', lifepath: 'numerology',
+  hd: 'humandesign', humandesignsystem: 'humandesign',
+  tzolkin: 'mayan', mayantzolkin: 'mayan', mayancalendar: 'mayan',
+  celtictree: 'celtic', treeastrology: 'celtic', druid: 'celtic',
+  korean: 'saju', sajupalja: 'saju',
+  tibetanastrology: 'tibetan',
+  ziweidoushu: 'ziwei', zwds: 'ziwei', purplestar: 'ziwei', emperorstar: 'ziwei',
+  onmyoji: 'onmyodo', yinyang: 'onmyodo',
+  hellenisticastrology: 'hellenistic',
+  norserunes: 'norserune', runes: 'norserune', rune: 'norserune', norse: 'norserune', futhark: 'norserune', elderfuthark: 'norserune',
+  oghamalphabet: 'ogham', oghamtree: 'ogham',
+  arabicpart: 'arabicparts', lots: 'arabicparts', arabiclots: 'arabicparts', partoffortune: 'arabicparts',
+  kabbalah: 'kabbalistic', kabbalisticnumerology: 'kabbalistic', gematria: 'kabbalistic', qabalah: 'kabbalistic',
+  zoroastrianastrology: 'zoroastrian', persian: 'zoroastrian',
+  azteccalendar: 'aztec', tonalpohualli: 'aztec',
+  totem: 'nativeamerican', birthtotem: 'nativeamerican', nativeamericantotems: 'nativeamerican', medicinewheel: 'nativeamerican',
+  ifa: 'ifayoruba', yoruba: 'ifayoruba', ifadivination: 'ifayoruba',
+  dreamtime: 'aboriginal', aboriginaldreamtime: 'aboriginal',
+  biorhythms: 'biorhythm',
+  mahadasha: 'vedicmahadasha', dasha: 'vedicmahadasha', vimshottari: 'vedicmahadasha', dasa: 'vedicmahadasha',
+  brahmin: 'thaibrahmin',
+};
+
+function _levenshtein(a: string, b: string): number {
+  const m = a.length, n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+  let prev = Array.from({ length: n + 1 }, (_, i) => i);
+  let cur = new Array<number>(n + 1).fill(0);
+  for (let i = 1; i <= m; i++) {
+    cur[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + cost);
+    }
+    const tmp = prev; prev = cur; cur = tmp;
+  }
+  return prev[n];
+}
+
+export interface ResolvedSystem {
+  slug: string | null;                              // canonical slug, or null if unresolvable
+  matched: 'exact' | 'alias' | 'fuzzy' | 'none';
+  input: string;                                    // the raw input, for echo-back
+  suggestion?: string;                              // closest slug when fuzzy / none
+}
+
+/**
+ * Resolve a user-supplied system name to a canonical slug, tolerating case,
+ * separators, common aliases, and small typos (≤1 edit for short names, ≤2
+ * for longer ones). Returns slug:null with a suggestion when nothing is close.
+ */
+export function resolveSystem(input: string): ResolvedSystem {
+  const raw = String(input ?? '');
+  const n = _norm(raw);
+  if (!n) return { slug: null, matched: 'none', input: raw };
+
+  // 1. Exact canonical (normalized)
+  const exact = SYSTEM_SLUGS.find((s) => _norm(s) === n);
+  if (exact) return { slug: exact, matched: 'exact', input: raw };
+
+  // 2. Known alias (alias values are normalized slugs → map back to canonical)
+  const aliasNorm = SYSTEM_ALIASES[n];
+  if (aliasNorm) {
+    const canon = SYSTEM_SLUGS.find((s) => _norm(s) === aliasNorm) ?? aliasNorm;
+    return { slug: canon, matched: 'alias', input: raw };
+  }
+
+  // 3. Fuzzy across canonical slugs + alias keys
+  let best: string | null = null;
+  let bestD = Infinity;
+  const consider = (candidateNorm: string, canonNorm: string) => {
+    const d = _levenshtein(n, candidateNorm);
+    if (d < bestD) { bestD = d; best = canonNorm; }
+  };
+  for (const s of SYSTEM_SLUGS) consider(_norm(s), _norm(s));
+  for (const [alias, slugNorm] of Object.entries(SYSTEM_ALIASES)) consider(alias, slugNorm);
+
+  const threshold = n.length <= 4 ? 1 : 2;
+  if (best !== null && bestD <= threshold) {
+    const canon = SYSTEM_SLUGS.find((s) => _norm(s) === best) ?? best;
+    return { slug: canon, matched: 'fuzzy', input: raw, suggestion: canon };
+  }
+  const canonSugg = best !== null ? (SYSTEM_SLUGS.find((s) => _norm(s) === best) ?? best) : undefined;
+  return { slug: null, matched: 'none', input: raw, suggestion: canonSugg };
+}
+
+// ── Birth-time disclosure ───────────────────────────────────────────
+// Layers whose output depends on the birth TIME (not just the date). When
+// the caller omits hour/minute the engine falls back to 12:00 noon, so these
+// are flagged approximate rather than silently presented as precise — the
+// honest-engine stance (see about_mythsensus_engine).
+export const TIME_SENSITIVE_LAYERS = [
+  'BaZi hour pillar',
+  'Western Ascendant & houses',
+  'Zi Wei Dou Shu',
+  'Vedic & Hellenistic Ascendant',
+  'Arabic Parts',
+];
+
+// NOTE (v2 ceiling): disclosure-only for now — the score still computes with
+// the noon fallback. A deeper version would drop the hour-pillar / house
+// contributions from the aggregate when time is unknown.
+export function timeDisclosure(timeKnown: boolean): { time_provided: boolean; note?: string } {
+  if (timeKnown) return { time_provided: true };
+  return {
+    time_provided: false,
+    note:
+      'Birth time not provided — engine used 12:00 noon as a neutral default. ' +
+      'Time-dependent layers are approximate: ' + TIME_SENSITIVE_LAYERS.join(', ') +
+      '. Pass hour (and minute) for full precision.',
+  };
+}
+
+// ── Typo-tolerant city / location resolver ──────────────────────────
+// Resolves a free-text location — a city name (Thai or English, with aliases
+// and small typos) OR an explicit "lat,lon" pair — to coordinates + standard
+// timezone, from a bundled OFFLINE table (engine/cities.json). No network: the
+// server stays fully local (privacy promise). Unlisted cities resolve to null
+// so the caller can fall back to a default. Curated v1 subset — see cities.json.
+let _cities: any[] | null = null;
+function loadCities(): any[] {
+  if (_cities) return _cities;
+  const fs = require('fs');
+  const raw = JSON.parse(fs.readFileSync(join(__dirname, 'engine', 'cities.json'), 'utf8'));
+  _cities = Array.isArray(raw) ? raw : (raw.cities ?? []);
+  return _cities!;
+}
+
+export interface ResolvedCity {
+  lat: number | null;
+  lon: number | null;
+  tz?: number;
+  name: string | null;
+  matched: 'coords' | 'exact' | 'alias' | 'fuzzy' | 'none';
+  input: string;
+  suggestion?: string;
+}
+
+export function resolveCity(input: string): ResolvedCity {
+  const raw = String(input ?? '').trim();
+  if (!raw) return { lat: null, lon: null, name: null, matched: 'none', input: raw };
+
+  // Explicit "lat,lon" (also accepts "lat lon" or "lat/lon")
+  const m = raw.match(/^\s*(-?\d{1,2}(?:\.\d+)?)\s*[,/ ]\s*(-?\d{1,3}(?:\.\d+)?)\s*$/);
+  if (m) {
+    const lat = parseFloat(m[1]); const lon = parseFloat(m[2]);
+    if (lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+      return { lat, lon, name: `${lat},${lon}`, matched: 'coords', input: raw };
+    }
+  }
+
+  const cities = loadCities();
+  const n = _norm(raw);
+  if (!n) return { lat: null, lon: null, name: null, matched: 'none', input: raw };
+
+  // 1. Exact on canonical name
+  for (const c of cities) {
+    if (_norm(c.name) === n) return { lat: c.lat, lon: c.lon, tz: c.tz, name: c.name, matched: 'exact', input: raw };
+  }
+  // 2. Exact on a known alias
+  for (const c of cities) {
+    if ((c.aliases ?? []).some((al: string) => _norm(al) === n)) {
+      return { lat: c.lat, lon: c.lon, tz: c.tz, name: c.name, matched: 'alias', input: raw };
+    }
+  }
+
+  // 3. Fuzzy across names + aliases (Levenshtein, length-scaled threshold)
+  let best: any = null;
+  let bestD = Infinity;
+  for (const c of cities) {
+    for (const cand of [c.name, ...(c.aliases ?? [])]) {
+      const cn = _norm(cand);
+      if (!cn) continue;
+      const d = _levenshtein(n, cn);
+      if (d < bestD) { bestD = d; best = c; }
+    }
+  }
+  const threshold = n.length <= 4 ? 1 : 2;
+  if (best && bestD <= threshold) {
+    return { lat: best.lat, lon: best.lon, tz: best.tz, name: best.name, matched: 'fuzzy', input: raw, suggestion: best.name };
+  }
+  return { lat: null, lon: null, name: null, matched: 'none', input: raw, suggestion: best ? best.name : undefined };
+}
+
+// ── Reference methodology / interpretation rules ────────────────────
+// Curated, OPEN methodology (anti-disintermediation + authority) — the rules
+// an AI should ground a divination answer in. Distinct from the per-user
+// computed reading, which stays gated in calculate(). Loaded from
+// engine/system-rules.json.
+let _rules: any = null;
+export function systemRules(): any {
+  if (_rules) return _rules;
+  const fs = require('fs');
+  _rules = JSON.parse(fs.readFileSync(join(__dirname, 'engine', 'system-rules.json'), 'utf8'));
+  return _rules;
+}
+
 /**
  * Deterministic deity draw — picks a deity from gods.json biased by chart
  * tier + date. Same chart on the same day always draws the same deity.
