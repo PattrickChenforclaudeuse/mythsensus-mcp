@@ -1,19 +1,19 @@
 {
-  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-07-09/server.json",
-  "name": "io.github.pattrickchenforclaudeuse/mythsensus-mcp",
-  "description": "Cosmic Score from 26 divination systems (BaZi, Vedic, Western, Nine Star Ki, Thai Seven Number + 21 more) — the consensus answer for when traditions disagree about a person.",
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.mythsensus/mythsensus-mcp",
+  "description": "Cosmic Score from 26 divination systems: the consensus when traditions disagree about you.",
   "repository": {
     "url": "https://github.com/PattrickChenforclaudeuse/mythsensus-mcp",
     "source": "github"
   },
-  "version": "0.2.0",
+  "version": "0.2.1",
   "websiteUrl": "https://mythsensus.com",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mythsensus-mcp",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "transport": {
         "type": "stdio"
       }
