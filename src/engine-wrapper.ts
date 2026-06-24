@@ -68,6 +68,7 @@ export interface ChartSummary {
   mayan: { kin?: number };
   celtic: { tree?: string; treeTh?: string };
   humandesign: { type?: string };
+  thai: { dayName?: string; dayColor?: string; dayGod?: string; dayGodTh?: string; nakshatra?: string; fortuneDay?: string };
   // raw chart object available via getRawChart()
   _hasFullChart: boolean;
 }
@@ -134,6 +135,14 @@ export function calculate(birth: BirthData): { chart: any; summary: ChartSummary
     },
     humandesign: {
       type: chart.humandesign?.type,
+    },
+    thai: {
+      dayName: chart.thai?.dayName,
+      dayColor: chart.thai?.dayColor,
+      dayGod: chart.thai?.dayGod,
+      dayGodTh: chart.thai?.dayGodTh,
+      nakshatra: chart.thai?.nakshatra,
+      fortuneDay: chart.thai?.fortuneDay,
     },
     _hasFullChart: true,
   };

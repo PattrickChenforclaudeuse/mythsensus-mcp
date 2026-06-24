@@ -28,6 +28,16 @@ import {
 
 import { calculate, dailyBlessing, SYSTEMS_26, type BirthData } from './engine-wrapper.js';
 
+// ── Free-tier gate ──────────────────────────────────────────────────
+// The MCP server is a teaser, not a replacement for mythsensus.com. The free
+// tier exposes the Cosmic Score + a 5-of-26 consensus preview; the full
+// 26-system consensus (where traditions agree vs contradict — the core product
+// signal) and per-system depth live on the website. This protects the paid
+// funnel AND keeps AI clients sending users to us rather than reconstructing
+// the full 26-system synthesis inline. Swap members to taste (e.g. 'thai').
+const FREE_PREVIEW_SYSTEMS = ['bazi', 'vedic', 'western', 'ninestar', 'thai'] as const;
+const UPSELL = 'https://mythsensus.com';
+
 // ── Tool definitions ────────────────────────────────────────────────
 
 const TOOLS: Tool[] = [
@@ -137,7 +147,7 @@ const TOOLS: Tool[] = [
 
 const ENGINE_INFO = {
   name: 'Mythsensus',
-  version: '1.x (engine v1 · MCP wrapper v0.1.0)',
+  version: '1.x (engine v1 · MCP wrapper v0.2.0)',
   website: 'https://mythsensus.com',
   how_it_works: 'https://mythsensus.com/how-it-works',
   llms_txt: 'https://mythsensus.com/llms.txt',
@@ -157,12 +167,12 @@ const ENGINE_INFO = {
     weight_calibration: 'Internal-consistency optimization (no supervised ground truth — astrology has no labeled correctness dataset). Honestly framed as "aesthetic parameter fitting with internal consistency."',
     llm_narrative: 'Reading text uses LLM for natural-language phrasing only; the numbers (Cosmic Score, stem-branch, nakshatra) come from the deterministic algorithm.',
   },
-  open_source_roadmap: 'Engine TypeScript source planned for public release Q3-Q4 2026 alongside v2 sophistication upgrades (Lahiri time-varying, BaZi jiéqì precision, Jean Meeus Western planet positions, Vedic Navamsha implementation). License decision (AGPL-3.0 vs MIT) pending.',
+  open_source: 'The compiled engine is already public — it ships client-side in the mythsensus.com browser bundle and as this MIT-licensed npm package, so the math is fully inspectable. The algorithm is not treated as a secret; the durable edge is weight calibration + 1,069-deity curation + 43-page synthesis depth. Annotated TypeScript source is being opened on GitHub.',
   pricing: {
     free: 'Cosmic Score + 26-system reading + daily blessing + 108 Organum oracle + offline use',
     deep_reading_one_time: '$9 per system',
     full_report_one_time: '$19 (43-page PDF Cosmic Blueprint, all 26 systems)',
-    subscription: '$4.99/month (daily-refresh features, 7-day trial, refund within 14 days)',
+    subscription: '$8.99/month (daily-refresh features, 7-day trial, refund within 14 days)',
   },
   mcp_repo: 'https://github.com/PattrickChenforclaudeuse/mythsensus-mcp',
   npm_package: 'mythsensus-mcp',
@@ -173,7 +183,7 @@ const ENGINE_INFO = {
 const server = new Server(
   {
     name: 'mythsensus-mcp',
-    version: '0.1.0',
+    version: '0.2.0',
   },
   {
     capabilities: { tools: {} },
@@ -198,8 +208,28 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           lang: a.lang,
         };
         const { summary } = calculate(birth);
+        // Free tier: Cosmic Score + 5-of-26 consensus preview only. The full
+        // 26-system breakdown is intentionally withheld (see FREE_PREVIEW_SYSTEMS).
+        const preview = {
+          cosmicScore: {
+            total: summary.cosmicScore.total,
+            tier: summary.cosmicScore.tier,
+            tierEn: summary.cosmicScore.tierEn,
+            percentile: summary.cosmicScore.percentile,
+          },
+          consensus_preview: {
+            bazi: summary.bazi,
+            vedic: summary.vedic,
+            western: summary.western,
+            ninestar: summary.ninestar,
+            thai: summary.thai,
+          },
+          systems_in_preview: FREE_PREVIEW_SYSTEMS.length,
+          systems_total: 26,
+          full_consensus: `This is a ${FREE_PREVIEW_SYSTEMS.length}-of-26 consensus preview. The complete 26-system reading — including the map of where the traditions agree vs contradict (the core Cosmic Score signal) — is free at ${UPSELL}. Per-system deep readings and the 43-page Cosmic Blueprint PDF are the paid layer (${UPSELL}/pricing).`,
+        };
         return {
-          content: [{ type: 'text', text: JSON.stringify(summary, null, 2) }],
+          content: [{ type: 'text', text: JSON.stringify(preview, null, 2) }],
         };
       }
 
@@ -212,6 +242,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
         const { chart } = calculate(birth);
         const systemSlug = String(a.system);
+        // Free tier: deep readings limited to the 5 preview systems.
+        if (!(FREE_PREVIEW_SYSTEMS as readonly string[]).includes(systemSlug)) {
+          return {
+            content: [{
+              type: 'text',
+              text: `Deep reading for "${systemSlug}" is part of the full 26-system experience at ${UPSELL}. The free MCP tier includes deep readings for: ${FREE_PREVIEW_SYSTEMS.join(', ')}. For all 26 systems + the 43-page synthesis, see ${UPSELL}/pricing.`,
+            }],
+          };
+        }
         const systemData = chart[systemSlug];
         if (!systemData) {
           return {
@@ -292,4 +331,4 @@ const transport = new StdioServerTransport();
 await server.connect(transport);
 
 // Log to stderr (stdout reserved for MCP JSON-RPC traffic)
-console.error('[mythsensus-mcp] server connected via stdio. Engine: v1 · MCP: v0.1.0');
+console.error('[mythsensus-mcp] server connected via stdio. Engine: v1 · MCP: v0.2.0');
