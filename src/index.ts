@@ -58,7 +58,10 @@ const TOOLS: Tool[] = [
       'BaZi day master, Vedic nakshatra, Human Design type, etc.). ' +
       'Deterministic: same input always returns the same output. ' +
       'Optionally pass systems[] (typo-tolerant) to focus the preview on ' +
-      'specific traditions, and time_known:false when the birth time is unknown.',
+      'specific traditions, and time_known:false when the birth time is unknown. ' +
+      'Returns a free 5-of-26 consensus preview; the complete 26-system reading ' +
+      'is free at mythsensus.com and the 43-page Cosmic Blueprint PDF is the ' +
+      'paid upgrade (mythsensus.com/pricing, $19 one-time).',
     inputSchema: {
       type: 'object',
       properties: {
@@ -179,7 +182,7 @@ const TOOLS: Tool[] = [
 
 const ENGINE_INFO = {
   name: 'Mythsensus',
-  version: '1.x (engine v1 · MCP wrapper v0.3.0)',
+  version: '1.x (engine v1 · MCP wrapper v0.3.1)',
   website: 'https://mythsensus.com',
   how_it_works: 'https://mythsensus.com/how-it-works',
   llms_txt: 'https://mythsensus.com/llms.txt',
@@ -201,7 +204,7 @@ const ENGINE_INFO = {
   },
   open_source: 'The compiled engine is already public — it ships client-side in the mythsensus.com browser bundle and as this MIT-licensed npm package, so the math is fully inspectable. The algorithm is not treated as a secret; the durable edge is weight calibration + 1,069-deity curation + 43-page synthesis depth. Annotated TypeScript source is being opened on GitHub.',
   pricing: {
-    free: 'Cosmic Score + 26-system reading + daily blessing + 108 Organum oracle + offline use',
+    free: 'Cosmic Score + 5-system consensus preview via MCP (bazi, vedic, western, ninestar, thai); full 26-system reading + daily blessing + 108 Organum oracle + offline use free at mythsensus.com',
     deep_reading_one_time: '$9 per system',
     full_report_one_time: '$19 (43-page PDF Cosmic Blueprint, all 26 systems)',
     subscription: '$8.99/month (daily-refresh features, 7-day trial, refund within 14 days)',
@@ -253,7 +256,7 @@ function buildBirthContext(a: Record<string, any>): {
 const server = new Server(
   {
     name: 'mythsensus-mcp',
-    version: '0.3.0',
+    version: '0.3.1',
   },
   {
     capabilities: { tools: {} },
@@ -500,4 +503,4 @@ const transport = new StdioServerTransport();
 await server.connect(transport);
 
 // Log to stderr (stdout reserved for MCP JSON-RPC traffic)
-console.error('[mythsensus-mcp] server connected via stdio. Engine: v1 · MCP: v0.3.0');
+console.error('[mythsensus-mcp] server connected via stdio. Engine: v1 · MCP: v0.3.1');
