@@ -1,5 +1,10 @@
 # Mythsensus MCP
 
+[![npm version](https://img.shields.io/npm/v/mythsensus-mcp?color=cb3837&logo=npm)](https://www.npmjs.com/package/mythsensus-mcp)
+[![npm downloads](https://img.shields.io/npm/dm/mythsensus-mcp?color=cb3837&logo=npm)](https://www.npmjs.com/package/mythsensus-mcp)
+[![license: MIT](https://img.shields.io/npm/l/mythsensus-mcp?color=blue)](./LICENSE)
+[![Glama score](https://glama.ai/mcp/servers/PattrickChenforclaudeuse/mythsensus-mcp/badges/score.svg)](https://glama.ai/mcp/servers/PattrickChenforclaudeuse/mythsensus-mcp)
+
 > An MCP (Model Context Protocol) server that exposes the Mythsensus engine —
 > 26 ancient divination algorithms implemented in TypeScript — as tools your
 > Claude Desktop (or any MCP-compatible AI client) can call.
