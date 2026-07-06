@@ -1,6 +1,6 @@
 {
   "name": "mythsensus-mcp",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "mcpName": "com.mythsensus/mythsensus-mcp",
   "description": "MCP server exposing the Mythsensus engine — calculate Cosmic Score across 26 ancient divination algorithms (BaZi, Vedic, Western, Nine Star Ki, Mayan, Norse Runes, Thai Seven Number, and more) deterministically, client-side, from a birth date.",
   "main": "dist/index.js",

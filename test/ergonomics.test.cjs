@@ -165,7 +165,16 @@ async function e2e() {
   const list = await cli.request('tools/list', {});
   const toolNames = list.result.tools.map((t) => t.name);
   assert.ok(toolNames.includes('get_system_rules'), 'get_system_rules is registered');
-  assert.strictEqual(toolNames.length, 6, 'six tools total');
+  assert.ok(toolNames.includes('get_deity_lore'), 'get_deity_lore is registered');
+  assert.strictEqual(toolNames.length, 7, 'seven tools total');
+
+  // (h2) get_deity_lore — exact, case-insensitive, lang filter, pantheon link, ambiguity
+  const dl = await callTool(cli, 'get_deity_lore', { deity: 'ganesha', lang: 'en' });
+  assert.ok(/# Ganesha/.test(dl) && /Hinduism/.test(dl), 'get_deity_lore resolves ci + joins tradition');
+  assert.ok(/pantheon\/hinduism/.test(dl), 'get_deity_lore emits correct pantheon link');
+  const dlAmb = await callTool(cli, 'get_deity_lore', { deity: 'zznotadeity' });
+  assert.ok(/No deity matching/.test(dlAmb), 'get_deity_lore handles no-match gracefully');
+  console.log('✓ e2e: get_deity_lore exact/ci/lang/link/no-match');
 
   // (i) get_system_rules (no arg) → consensus methodology + 26-system overview (the moat content)
   const gr = JSON.parse(await callTool(cli, 'get_system_rules', {}));

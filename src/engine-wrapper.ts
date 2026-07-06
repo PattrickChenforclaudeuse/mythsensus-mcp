@@ -34,6 +34,62 @@ function loadGods(): any[] {
   return _gods;
 }
 
+// ── Deity-lore lookup (encyclopedic profile of the 1,044-deity collection) ──
+// engine/gods-lore.json = { "<Name>": { th, en } }; gods.json carries mythology
+// + rarity tier. Joined by exact name (1044/1044). Lazy-loaded like the rest.
+let _godsLore: Record<string, { th?: string; en?: string }> | null = null;
+let _loreNames: string[] | null = null;
+let _loreIndex: Map<string, string> | null = null;
+function loadGodsLore(): Record<string, { th?: string; en?: string }> {
+  if (_godsLore) return _godsLore;
+  const fs = require('fs');
+  _godsLore = JSON.parse(
+    fs.readFileSync(join(__dirname, 'engine', 'gods-lore.json'), 'utf8')
+  );
+  _loreNames = Object.keys(_godsLore!);
+  _loreIndex = new Map(_loreNames.map((n) => [n.toLowerCase(), n]));
+  return _godsLore!;
+}
+
+export interface DeityLore {
+  name?: string;        // resolved canonical name (present on a hit)
+  mythology?: string;   // origin tradition (from gods.json)
+  tier?: string;        // Mythsensus rarity tier (from gods.json)
+  en?: string;          // English lore
+  th?: string;          // Thai lore
+  candidates?: string[]; // present instead of name when the query is ambiguous
+}
+
+/**
+ * Resolve a free-text deity query to an encyclopedic profile. Case-insensitive
+ * exact match first, then unique startsWith, then unique substring; otherwise
+ * returns up to 15 candidates for disambiguation. Joins lore (th/en) with the
+ * deity's origin tradition + rarity tier from gods.json.
+ */
+export function getDeityLore(query: string): DeityLore {
+  loadGodsLore();
+  const key = String(query ?? '').trim().toLowerCase();
+  if (!key) return { candidates: [] };
+
+  let name: string | undefined;
+  if (_loreIndex!.has(key)) {
+    name = _loreIndex!.get(key);
+  } else {
+    const starts = _loreNames!.filter((n) => n.toLowerCase().startsWith(key));
+    if (starts.length === 1) {
+      name = starts[0];
+    } else {
+      const contains = _loreNames!.filter((n) => n.toLowerCase().includes(key));
+      if (!starts.length && contains.length === 1) name = contains[0];
+      else return { candidates: [...new Set([...starts, ...contains])].slice(0, 15) };
+    }
+  }
+
+  const lore = _godsLore![name!] ?? {};
+  const meta = loadGods().find((g: any) => g.name === name) ?? {};
+  return { name, mythology: meta.mythology, tier: meta.tier, en: lore.en, th: lore.th };
+}
+
 // ── Public API ─────────────────────────────────────────────────────
 
 export interface BirthData {
