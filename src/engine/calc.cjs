@@ -142,18 +142,19 @@ function planetLongitude(jd, p) {
         return mod360(50.1 + 0.0334 * D * 12 + 6.4 * Math.sin(M));
     }
 }
-function ascLongitude(jd, hour, lat, lon) {
+// Ascendant = the ecliptic longitude rising on the eastern horizon.
+// Fixed 2026-07-31 — previously matched the standard only 7% of the time (chance ~8%):
+//   1. birth time counted twice (jd already carries the hour, then `hour * 15` was added
+//      again -> ~30 deg/h -> two revolutions per day; 06:00 and 18:00 births came out equal)
+//   2. atan2 already resolves the quadrant, so `if (cos(RAMC) < 0) asc += 180` flipped it.
+// The `hour` parameter is deliberately gone - reintroducing it is how bug 1 comes back.
+function ascLongitude(jd, lat, lon) {
     const D = jd - 2451545.0;
     const GMST = mod360(280.46061837 + 360.98564736629 * D);
-    const LST = mod360(GMST + lon);
-    // UTC hour to RAMC
-    const RAMC = toRad(mod360(LST + hour * 15));
+    const RAMC = toRad(mod360(GMST + lon)); // local sidereal time; jd already carries the hour
     const eps = toRad(23.439 - 0.0000004 * D);
     const latR = toRad(lat);
-    let asc = toDeg(Math.atan2(Math.cos(RAMC), -(Math.sin(eps) * Math.tan(latR) + Math.cos(eps) * Math.sin(RAMC))));
-    // Quadrant
-    if (Math.cos(RAMC) < 0)
-        asc += 180;
+    const asc = toDeg(Math.atan2(Math.cos(RAMC), -(Math.sin(eps) * Math.tan(latR) + Math.cos(eps) * Math.sin(RAMC))));
     return mod360(asc);
 }
 function calcWestern(d) {
@@ -161,7 +162,7 @@ function calcWestern(d) {
     const jd = toJD(d.year, d.month, d.day, utcHour);
     const sunLon = sunLongitude(jd);
     const moonLon = moonLongitude(jd);
-    const ascLon = ascLongitude(jd, utcHour, d.lat, d.lon);
+    const ascLon = ascLongitude(jd, d.lat, d.lon);
     const jupLon = planetLongitude(jd, 'jupiter');
     const satLon = planetLongitude(jd, 'saturn');
     const sun = lonToSign(sunLon);

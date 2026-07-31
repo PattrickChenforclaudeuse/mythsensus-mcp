@@ -1,6 +1,6 @@
 {
   "name": "mythsensus-mcp",
-  "version": "0.3.3",
+  "version": "0.3.5",
   "mcpName": "com.mythsensus/mythsensus-mcp",
   "description": "MCP server exposing the Mythsensus engine — calculate Cosmic Score across 26 ancient divination algorithms (BaZi, Vedic, Western, Nine Star Ki, Mayan, Norse Runes, Thai Seven Number, and more) deterministically, client-side, from a birth date.",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "build": "tsc && node -e \"require('fs').cpSync('src/engine','dist/engine',{recursive:true})\"",
     "watch": "tsc --watch",
     "start": "node dist/index.js",
-    "test": "node test/smoke.test.cjs && node test/ergonomics.test.cjs",
+    "test": "node test/smoke.test.cjs && node test/ergonomics.test.cjs && node test/ascendant.test.cjs",
     "prepublishOnly": "npm run build"
   },
   "files": [

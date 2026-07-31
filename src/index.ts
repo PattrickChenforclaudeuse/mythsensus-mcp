@@ -220,7 +220,7 @@ const TOOLS: Tool[] = [
 
 const ENGINE_INFO = {
   name: 'Mythsensus',
-  version: '1.x (engine v1 · MCP wrapper v0.3.3)',
+  version: '1.x (engine v1 · MCP wrapper v0.3.5)',
   website: `${SITE}${UTM}`,
   how_it_works: `${SITE}/how-it-works${UTM}`,
   llms_txt: 'https://mythsensus.com/llms.txt',
