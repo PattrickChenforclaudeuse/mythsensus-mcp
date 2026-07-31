@@ -80,7 +80,7 @@ After install, ask Claude:
 - *"Which divination system is most accurate?"* → `get_system_rules` grounds the answer in cross-system consensus
 
 Sample report (Sunthorn Phu, Thai national poet b.1786, free preview of the
-$19 product): https://mythsensus.com/sample-report
+$19 product): https://mythsensus.com/sample-report?utm_source=mcp&utm_medium=readme
 
 ## Engineering honesty — current engine limitations
 
@@ -99,7 +99,7 @@ sophistication tier as **"Casual Sidereal"** — above hobby toys, below
 semi-professional Jyotish tools. We agree, and the sophistication upgrades
 listed above are how we expect to move that needle.
 
-Full details: https://mythsensus.com/how-it-works
+Full details: https://mythsensus.com/how-it-works?utm_source=mcp&utm_medium=readme
 
 ## Architecture
 
@@ -172,8 +172,8 @@ decision until Q3-Q4 2026 public release.
 
 ## Related
 
-- Website: https://mythsensus.com
+- Website: https://mythsensus.com/?utm_source=mcp&utm_medium=readme
 - llms.txt (AI-readable disclosure): https://mythsensus.com/llms.txt
-- How it works: https://mythsensus.com/how-it-works
-- Sample 43-page report: https://mythsensus.com/sample-report
-- Pricing: https://mythsensus.com/pricing
+- How it works: https://mythsensus.com/how-it-works?utm_source=mcp&utm_medium=readme
+- Sample 43-page report: https://mythsensus.com/sample-report?utm_source=mcp&utm_medium=readme
+- Pricing: https://mythsensus.com/pricing?utm_source=mcp&utm_medium=readme

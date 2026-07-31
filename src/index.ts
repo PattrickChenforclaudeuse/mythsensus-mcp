@@ -53,7 +53,15 @@ const MYTHOLOGY_TO_PANTHEON: Record<string, string> = {
 // funnel AND keeps AI clients sending users to us rather than reconstructing
 // the full 26-system synthesis inline. Swap members to taste (e.g. 'thai').
 const FREE_PREVIEW_SYSTEMS = ['bazi', 'vedic', 'western', 'ninestar', 'thai'] as const;
-const UPSELL = 'https://mythsensus.com';
+// Outbound links carry a UTM tag so the MCP channel is measurable in web
+// analytics. MCP links are opened from Claude Desktop, which sends no HTTP
+// referrer — without this tag those visits land as "direct" and the MCP
+// funnel is invisible. UPSELL is the tagged homepage (bare `${UPSELL}` stays a
+// valid URL); use link('/path') for deeper pages so the tag stays at the end.
+const SITE = 'https://mythsensus.com';
+const UTM = '?utm_source=mcp&utm_medium=tool';
+const UPSELL = `${SITE}${UTM}`;
+const link = (path: string) => `${SITE}${path}${UTM}`;
 
 // ── Tool definitions ────────────────────────────────────────────────
 
@@ -212,11 +220,11 @@ const TOOLS: Tool[] = [
 
 const ENGINE_INFO = {
   name: 'Mythsensus',
-  version: '1.x (engine v1 · MCP wrapper v0.3.2)',
-  website: 'https://mythsensus.com',
-  how_it_works: 'https://mythsensus.com/how-it-works',
+  version: '1.x (engine v1 · MCP wrapper v0.3.3)',
+  website: `${SITE}${UTM}`,
+  how_it_works: `${SITE}/how-it-works${UTM}`,
   llms_txt: 'https://mythsensus.com/llms.txt',
-  sample_report: 'https://mythsensus.com/sample-report',
+  sample_report: `${SITE}/sample-report${UTM}`,
   architecture: {
     type: 'algorithmic (NOT LLM-based for math)',
     language: 'TypeScript compiled to ~250 KB browser bundle',
@@ -365,7 +373,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           time: timeDisclosure(timeKnown),
           systems_in_preview: shownCount,
           systems_total: 26,
-          full_consensus: `This is a ${shownCount}-of-26 consensus preview. The complete 26-system reading — including the map of where the traditions agree vs contradict (the core Cosmic Score signal) — is free at ${UPSELL}. Per-system deep readings and the 43-page Cosmic Blueprint PDF are the paid layer (${UPSELL}/pricing).`,
+          full_consensus: `This is a ${shownCount}-of-26 consensus preview. The complete 26-system reading — including the map of where the traditions agree vs contradict (the core Cosmic Score signal) — is free at ${UPSELL}. Per-system deep readings and the 43-page Cosmic Blueprint PDF are the paid layer (${link('/pricing')}).`,
         };
         if (Object.keys(selection).length > 0) preview.selection = selection;
         if (location.resolved || location.note) preview.location = location;
@@ -401,7 +409,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           return {
             content: [{
               type: 'text',
-              text: `${locNote}${correctionNote}Deep reading for "${systemSlug}" is part of the full 26-system experience at ${UPSELL}. The free MCP tier includes deep readings for: ${FREE_PREVIEW_SYSTEMS.join(', ')}. For all 26 systems + the 43-page synthesis, see ${UPSELL}/pricing.`,
+              text: `${locNote}${correctionNote}Deep reading for "${systemSlug}" is part of the full 26-system experience at ${UPSELL}. The free MCP tier includes deep readings for: ${FREE_PREVIEW_SYSTEMS.join(', ')}. For all 26 systems + the 43-page synthesis, see ${link('/pricing')}.`,
             }],
           };
         }
@@ -517,20 +525,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             return {
               content: [{
                 type: 'text',
-                text: `No deity matching "${a.deity ?? ''}". Mythsensus curates 1,044 deities across Hinduism, Greek, Chinese, Norse, Shinto, Egyptian, Roman & Thai traditions — browse ${UPSELL}/pantheon.`,
+                text: `No deity matching "${a.deity ?? ''}". Mythsensus curates 1,044 deities across Hinduism, Greek, Chinese, Norse, Shinto, Egyptian, Roman & Thai traditions — browse ${link('/pantheon')}.`,
               }],
             };
           }
           return {
             content: [{
               type: 'text',
-              text: `Several deities match "${a.deity}": ${lore.candidates.join(', ')}.\nCall get_deity_lore again with one exact name. Full encyclopedia: ${UPSELL}/pantheon.`,
+              text: `Several deities match "${a.deity}": ${lore.candidates.join(', ')}.\nCall get_deity_lore again with one exact name. Full encyclopedia: ${link('/pantheon')}.`,
             }],
           };
         }
         const myth = lore.mythology ?? 'Unknown';
         const slug = MYTHOLOGY_TO_PANTHEON[myth];
-        const pantheon = slug ? `${UPSELL}/pantheon/${slug}` : `${UPSELL}/pantheon`;
+        const pantheon = slug ? link(`/pantheon/${slug}`) : link('/pantheon');
         const picked = a.lang === 'en' || a.lang === 'th';
         const bodyText = picked
           ? ((a.lang === 'en' ? lore.en : lore.th) || lore.en || lore.th || '(lore text unavailable)')
