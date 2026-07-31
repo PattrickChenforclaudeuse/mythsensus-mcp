@@ -32,13 +32,31 @@ One-line pitch (reuse in every listing):
 | 6 | **punkpeye/awesome-mcp-servers** (GitHub) | PR | add one line under a category | PR from garsell |
 
 ### Official MCP Registry (the one AI clients actually read)
+
+> ⚠️ **Corrected 2026-07-31 — the block below used to say `npm i -g @modelcontextprotocol/registry`.
+> That package does not exist (404).** `mcp-publisher` is a Go binary on GitHub releases, and the
+> namespace is **`com.mythsensus/*` via domain auth**, not `io.github.*` via GitHub — the GitHub
+> account is flagged, so nothing here may depend on it.
+
+Publish with the API directly — no binary to install, no GitHub involved:
+
 ```bash
-# one-time
-npm i -g @modelcontextprotocol/registry   # provides `mcp-publisher`
-mcp-publisher login github                 # opens browser, authorizes namespace io.github.pattrickchenforclaudeuse
-mcp-publisher publish                       # reads ./server.json
+cd "D:/Claude works here/mythsensus-mcp"
+# 1. diff server.json against the LIVE entry first — see the trap below
+curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=mythsensus"
+# 2. publish (seed hex = Mythsensus/_credentials.local.md §MCP Registry)
+MCP_SEED_HEX=<hex> node "../Mythsensus/_launch-drafts/mcp-publish.mjs" server.json
 ```
-Namespace `io.github.pattrickchenforclaudeuse/*` is auto-verified because the repo is under that GitHub account.
+
+The script signs an RFC3339 timestamp with the Ed25519 domain key → `POST /v0/auth/http`
+→ registry JWT → `POST /v0/publish` with the server.json body.
+
+🔴 **Trap (cost a wasted version on 2026-07-31):** registry versions are **immutable**
+(`cannot publish duplicate version`). The local `server.json` had drifted — it was missing the
+`remotes` block the live entry carried — so publishing it made a latest entry with **no hosted
+`https://mythsensus.com/mcp`**, and repairing it required burning a fresh version number.
+**Always diff local `server.json` against the live entry before publishing.**
+`packages[].version` may differ from the top-level `version` (entry 0.3.4 points at npm 0.3.3).
 
 ### awesome-mcp-servers PR — line to add (under "🔮 Other Tools / Lifestyle")
 ```markdown
