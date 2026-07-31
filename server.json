@@ -6,17 +6,23 @@
     "url": "https://github.com/PattrickChenforclaudeuse/mythsensus-mcp",
     "source": "github"
   },
-  "version": "0.3.0",
+  "version": "0.3.4",
   "websiteUrl": "https://mythsensus.com",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mythsensus-mcp",
-      "version": "0.3.0",
+      "version": "0.3.3",
       "transport": {
         "type": "stdio"
       }
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mythsensus.com/mcp"
     }
   ]
 }
