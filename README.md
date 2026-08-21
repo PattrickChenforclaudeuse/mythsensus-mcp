@@ -12,9 +12,9 @@
 ```
 You: "What's my Cosmic Score? I was born March 15, 1990."
 Claude: [calls calculate_cosmic_score({year:1990, month:3, day:15})]
-Claude: "Your Cosmic Score is 723/999 — 'Resonant' tier.
-         Sun in Pisces. BaZi day master is Yin Wood. Life Path 3.
-         Mayan Kin 207. Human Design: Manifestor..."
+Claude: "Your Cosmic Score is 770/1000 — 'Balance' tier, top 33%.
+         Sun in Pisces. BaZi day master is Yin Earth. Life Path 1.
+         Mayan Kin 163 (Akbal). Human Design: Generator..."
 ```
 
 ## What this is (and isn't)
