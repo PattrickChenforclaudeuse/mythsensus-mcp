@@ -609,20 +609,33 @@ function monthPillar(y, m, d, hour = 12) {
     const offset = ((sunLon - 315) % 360 + 360) % 360; // 0..360 from Li Chun
     const branchOffset = Math.floor(offset / 30); // 0=寅, 1=卯, ..., 11=丑
     const bi = (2 + branchOffset) % 12;
-    // Stem: use WESTERN calendar year (not Lichun-adjusted) for month stem formula
-    // 甲己年→子月甲, 乙庚年→子月丙, 丙辛年→子月戊, 丁壬年→子月庚, 戊癸年→子月壬
-    const westernStemIdx = ((y - 4) % 10 + 10) % 10;
-    const baseMonthStem = (westernStemIdx % 5) * 2;
-    const si = (baseMonthStem + bi) % 10;
+    // Stem: Five Tigers rule (五虎遁) — 甲己年→寅月丙, 乙庚年→寅月戊, 丙辛年→寅月庚,
+    // 丁壬年→寅月壬, 戊癸年→寅月甲 — then step one stem per month from 寅 onward.
+    //
+    // Two things this must get right, both of which the previous version did not:
+    //  1. The stem walks with `branchOffset` (months elapsed since 寅), NOT with `bi`.
+    //     Branches wrap at 12 and stems at 10, so 子/丑 — the 11th and 12th months of a
+    //     BaZi year — carry bi 0 and 1 while actually being +10 and +11 from 寅. Using
+    //     `bi` shifted those two months by 2 stems.
+    //  2. The base comes from the Lichun-adjusted year, not the western calendar year.
+    //     A January birth is still in the PRIOR BaZi year.
+    // The old code was wrong on both counts; for 丑 the two errors happened to cancel,
+    // which is why only 子-month births (~7 Dec – 31 Dec) showed a visible defect.
+    const baziYear = (sunLon >= 280 && sunLon < 315) ? y - 1 : y;
+    const yStemIdx = ((baziYear - 4) % 10 + 10) % 10;
+    const si = ((yStemIdx % 5) * 2 + 2 + branchOffset) % 10;
     return { stem: STEMS[si], branch: BRANCHES[bi], stemTh: pStem(si), branchTh: pBranch(bi), si, bi };
 }
 function dayPillar(year, month, day) {
-    // Anchor: Jan 1, 1900 = 丙子 (cycle index 12, not 0)
-    // Offset +12 aligns甲子(0) reference so 丙子 falls at day 0
+    // Anchor: Jan 1, 1900 (JDN 2415021) = 甲戌 — cycle index 10, not 12.
+    // The old +12 claimed 丙子 for that date and skewed EVERY day pillar by two
+    // positions, i.e. every Day Master the engine has ever produced. Index 10 is
+    // the value that satisfies both independently attested anchors:
+    //   1949-10-01 = 甲子 (index 0)   ·   2000-01-01 = 戊午 (index 54)
     const ref = toJD(1900, 1, 1, 12);
     const jd = toJD(year, month, day, 12);
     const diff = Math.round(jd - ref);
-    const cycle = ((diff + 12) % 60 + 60) % 60;
+    const cycle = ((diff + 10) % 60 + 60) % 60;
     const si = cycle % 10;
     const bi = cycle % 12;
     return { stem: STEMS[si], branch: BRANCHES[bi], stemTh: pStem(si), branchTh: pBranch(bi), si, bi };
