@@ -123,8 +123,15 @@ function moonLongitude(jd) {
     const Ml = toRad(mod360(134.9634114 + 13.06499295 * D));
     const F = toRad(mod360(93.2720950 + 13.22935024 * D));
     const Dm = toRad(mod360(297.8501921 + 12.19074912 * D));
-    return mod360(L0 + 6.289 * Math.sin(Ml) - 1.274 * Math.sin(2 * Dm - Ml)
-        + 0.658 * Math.sin(2 * Dm) - 0.214 * Math.sin(2 * Ml)
+    return mod360(
+    // Meeus, Astronomical Algorithms ch.47 (Table 47.A): the evection term is
+    // -1.274 sin(M' - 2D), i.e. +1.274 sin(2D - M'), and the variation term
+    // +0.214 sin(2M') is positive. Both were negated here, which put the Moon
+    // out by 1.63 deg on average (max 3.13) against JPL Horizons and moved
+    // 12% of nakshatras and 49% of padas. index.html's moonLon() has carried
+    // the correct signs all along. (2026-08-21)
+    L0 + 6.289 * Math.sin(Ml) + 1.274 * Math.sin(2 * Dm - Ml)
+        + 0.658 * Math.sin(2 * Dm) + 0.214 * Math.sin(2 * Ml)
         - 0.186 * Math.sin(Ms) - 0.114 * Math.sin(2 * F));
 }
 // Low-precision GEOCENTRIC ecliptic longitude via Schlyter's formulae (orbital
@@ -1233,7 +1240,7 @@ const NSK_READINGS = {
     9: 'ดาว 9 ม่วงไฟ — เป็นนักสร้างสรรค์และนักแสดง มีพลังงานสูง โดดเด่น ปี 2026 (Honmei-sei Kaiki) เป็นปีที่ทุกสิ่งขยายผล — ความสำเร็จและความเสี่ยงขยายตัวพร้อมกัน',
 };
 const NSK_READINGS_EN = {
-    1: 'Star 1 White Water — a brilliant, deep, adaptable communicator with sharp intuition. Suited to work demanding creativity and communication. In 2026 (Year of Fire Star 9) watch your health and avoid hasty decisions.',
+    1: 'Star 1 White Water — a brilliant, deep, adaptable communicator with sharp intuition. Suited to work demanding creativity and communication.',
     2: 'Star 2 Black Earth — a caregiver and supporter, gifted at managing and nurturing, high endurance. 2026 is a challenging year — guard against stress and tend your health.',
     3: 'Star 3 Bright Green Wood — a pioneer and leader, brave, full of new ideas, high energy. 2026 favours starting something new.',
     4: 'Star 4 Soft Green Wood — excellent communication and relationship skills, loves travel and learning. In 2026 watch out for being deceived or making decision errors.',
@@ -1467,7 +1474,7 @@ function _nineStarDeepSections(a) {
         return `<tr><td style="padding:4px 8px;border-bottom:1px solid #2a2545;white-space:nowrap">${isEn ? MONTHS_EN_L[i] : MONTHS_TH_L[i]} 2026</td><td style="padding:4px 8px;border-bottom:1px solid #2a2545;color:#9a8a72">${isEn ? 'Star' : 'ดาว'} ${ms}</td><td style="padding:4px 8px;border-bottom:1px solid #2a2545;color:#c8b080">${tone}</td></tr>`;
     }).join('');
     sections.push(blk('📅', 'แนวโน้มปี 2026 — รายเดือน', 'Your 2026 Outlook — Month by Month', P(isEn ? `In 2026 (Year of Star 9 Fire), each month carries a different guest star colouring your birth star's energy. Use ${B('supportive')} months for major launches, ${B('wealth')} months for financial moves, and ease off in ${B('pressure')} months.`
-        : `ในปี 2026 (ปีดาว 9 ไฟ) แต่ละเดือนมีดาวแขกที่ระบายสีพลังงานของดาวเกิดคุณ ใช้เดือน${B('หนุน')}สำหรับเปิดตัวงานใหญ่ เดือน${B('ทรัพย์')}สำหรับการเงิน และผ่อนในเดือน${B('กดดัน')}`) +
+        : `ในปี 2026 แต่ละเดือนมีดาวแขกที่ระบายสีพลังงานของดาวเกิดคุณ ใช้เดือน${B('หนุน')}สำหรับเปิดตัวงานใหญ่ เดือน${B('ทรัพย์')}สำหรับการเงิน และผ่อนในเดือน${B('กดดัน')}`) +
         `<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:6px">${monthRowData}</table>`));
     sections.push(blk('🎨', 'เสริมและเลี่ยง — ภาพรวม', 'Enhance & Avoid — Overall Summary', P(`✅ ${B(isEn ? 'Enhance your star' : 'เสริมพลังดาว')}: ${isEn ? `colour ${B(eColor(color))} · work direction ${B(eDir(dir))} · sleep direction ${B(eDir(sleepDir))} · element ${B(eEl(el))} and ${B(eEl(fuelEl))} (feeds your star)` : `สี${B(eColor(color))} · ทิศทำงาน${B(eDir(dir))} · ทิศนอน${B(eDir(sleepDir))} · ธาตุ${B(eEl(el))} และ ${B(eEl(fuelEl))} (หนุนดาวคุณ)`}`) +
         P(`⚠️ ${B(isEn ? 'Avoid (what weighs on your star)' : 'เลี่ยง (สิ่งที่ถ่วงดาว)')}: ${isEn ? `element ${B(eEl(stressEl))} (controls/weakens you) · ${B('Southwest')} in 2026 (Star 5) · overloading watch-zone organs (${ORGAN[stressEl]?.[1] ?? 'related systems'})` : `ธาตุ${B(eEl(stressEl))} (ควบคุม/ทำให้อ่อน) · ทิศ${B('ตะวันตกเฉียงใต้')}ปี 2026 (ดาว 5) · โหลดอวัยวะเฝ้าระวังเกิน (${ORGAN[stressEl]?.[0] ?? 'ระบบที่เกี่ยวข้อง'})`}`)));
@@ -1484,16 +1491,19 @@ function calcNineStar(d) {
     // Before Risshun (~Feb 4): use previous year
     if (d.month < 2 || (d.month === 2 && d.day < 4))
         y--;
-    let star = ((2 - (y - 2024)) % 9 + 9) % 9;
+    // 本命星 runs backwards one star a year. Anchors from published 早見表:
+    // 2024 = 三碧木星 (3), 2025 = 二黒土星 (2), 2026 = 一白水星 (1), 1991 = 九紫火星 (9).
+    // The anchor was 2 here, which put every chart one star low. (2026-08-21)
+    let star = ((3 - (y - 2024)) % 9 + 9) % 9;
     if (star === 0)
         star = 9;
     const data = NSK_DATA[star];
-    const isHonmei = star === 9; // 2026 year star = 9
+    const isHonmei = star === 1; // 2026 year star = 1 (一白水星)
     const analysis2026 = isHonmei
         ? tPick('Honmei-sei Kaiki 本命星回帰 — ดาวของคุณตรงกับดาวปี 2026 พอดี ทุกสิ่งขยายผลคูณสอง ทั้งโอกาสและความเสี่ยง ต้องใส่ใจทุกการกระทำ', 'Honmei-sei Kaiki 本命星回帰 — your star matches the 2026 year star exactly. Everything amplifies twofold: both opportunity and risk. You must be mindful of every action.')
-        : tPick(`ปี 2026 (ดาวปี 9 ไฟ) กับดาว ${star} ของคุณ — ${data.dir}คือทิศนำโชค ใช้เสริมพลังงานการทำงานและการนอน`, `2026 (Year of Fire Star 9) with your Star ${star} — ${pDir(data.dir)} is your lucky direction; use it to support work and sleep energy.`);
+        : tPick(`ปี 2026 เป็นปีดาว 1 (一白水星 ธาตุน้ำ) — ดาวประจำตัวคุณคือดาว ${star} · ${data.dir}คือทิศนำโชคประจำดาวของคุณ`, `2026 is a Star 1 year (一白水星, Water). Your own star is ${star} — ${pDir(data.dir)} is that star's lucky direction.`);
     const NSK_BASE = { 1: 700, 2: 650, 3: 730, 4: 720, 5: 580, 6: 750, 7: 720, 8: 760, 9: 800 };
-    const nskScore = Math.max(400, Math.min(960, (NSK_BASE[star] ?? 700) + (star === 9 ? 50 : 0) + ((d.day * 11 + d.month * 5) % 80) - 40));
+    const nskScore = Math.max(400, Math.min(960, (NSK_BASE[star] ?? 700) + (star === 1 ? 50 : 0) + ((d.day * 11 + d.month * 5) % 80) - 40));
     const nskResult = {
         star, starName: data.name, starChinese: data.chinese,
         starElement: pEl(data.el), starColor: pColor(data.color),
@@ -1518,12 +1528,12 @@ function calcNineStar(d) {
             keyValueMeaningEn: `Your main star is <strong>Star ${star} — ${data.name}</strong> (${data.chinese}), an element of <strong>${data.el}</strong>. Your lucky direction is <strong>${data.dir}</strong> and your sleep direction is <strong>${data.sleepDir}</strong>. In Nine Star Ki, your star sits in a different position each year — known as the "9-year cycle" — beginning from the centre (position 5) and rotating one square at a time. The position you currently occupy tells you whether this is a year to "step forward" or "pull back to gather strength".`,
             strengthTh: `ดาว ${star} ${data.name} ให้พรพิเศษ — ${star === 1 ? 'ดาวน้ำขาว คุณเป็นนักคิดลึกและนักปรับตัว เหมือนน้ำที่ไหลผ่านอุปสรรคโดยไม่แตก คนดาว 1 มักประสบความสำเร็จในงานที่ต้องใช้สัญชาตญาณและความยืดหยุ่น' : star === 2 ? 'ดาวดินดำ คุณเป็นผู้บ่มเพาะและดูแล มีความอดทนที่คนอื่นอิจฉา เหมาะกับงานระยะยาวที่ไม่ต้องการการยอมรับเร็วๆ' : star === 3 ? 'ดาวไม้เขียวสด คุณเป็นนักริเริ่มและผู้เดินหน้า พลังงานเหมือนฟ้าผ่า ทะลวงได้ทุกอุปสรรค' : star === 4 ? 'ดาวไม้เขียวอ่อน คุณเป็นนักสื่อสารและผู้เชื่อมคน พลังยืดหยุ่นเหมือนลม ไปถึงทุกที่ที่ต้องการ' : star === 5 ? 'ดาวดินเหลือง — ดาวกลางของจัตุรัสเวท พลังงานสูงที่สุดในทุกดาว แต่ต้องจัดการให้สมดุล มิเช่นนั้นจะผันผวน' : star === 6 ? 'ดาวโลหะขาว คุณเป็นผู้นำโดยธรรมชาติ มีหลักการและศักดิ์ศรี เหมือนฟ้าหลวง เหมาะเป็นผู้บริหารหรือผู้มีอำนาจตามหลักการ' : star === 7 ? 'ดาวโลหะแดง คุณมีเสน่ห์และพูดเก่ง เหมือนทะเลสาบยามเย็น ดึงดูดคนเข้าหา เหมาะกับงานค้าขายและการสื่อสาร' : star === 8 ? 'ดาวดินขาว คุณมั่นคงและสะสมทรัพย์ได้ดี เหมือนภูเขา อดทนและสร้างสิ่งถาวร เหมาะกับการลงทุนและอสังหา' : 'ดาวไฟม่วง คุณฉลาดหลักแหลมและมองการณ์ไกล เหมือนไฟส่องทาง สัญชาตญาณเฉียบแหลม ชอบเป็นที่รู้จักและมีอิทธิพล'} สิ่งที่เสริมดวงของคุณคือสี<strong>${data.color}</strong> ทิศทำงาน<strong>${data.dir}</strong> และทิศนอน<strong>${data.sleepDir}</strong>`,
             strengthEn: `Star ${star} ${data.name} grants a distinctive gift — ${star === 1 ? 'White Water star: you are a deep thinker and a master adapter, like water flowing past obstacles without breaking. Star 1 people excel at work that demands intuition and flexibility' : star === 2 ? 'Black Earth star: you are a nurturer and caretaker, with a patience others envy. Suited to long-haul work that doesn\'t demand quick recognition' : star === 3 ? 'Bright Green Wood star: you are an initiator and pace-setter. Your energy is like lightning — piercing through any obstacle' : star === 4 ? 'Soft Green Wood star: you are a communicator and connector. Your energy is wind-like — flexible, reaching everywhere it needs to go' : star === 5 ? 'Yellow Earth star — the central square of the magic grid. The highest-energy star, but it requires deliberate balance or it becomes volatile' : star === 6 ? 'White Metal star: you are a natural leader with principle and dignity, like the celestial sovereign. Suited to executive roles and principled authority' : star === 7 ? 'Red Metal star: you have charm and verbal skill, like a lake at dusk that draws others in. Excellent for sales and communication' : star === 8 ? 'White Earth star: you are steady and accumulate wealth well — like a mountain. Patient, building things that last. Suited to investment and real estate' : 'Purple Fire star: you are sharp and far-sighted, like a fire lighting the way. Acute intuition. You enjoy recognition and influence'}. What amplifies your chart: the colour <strong>${data.color}</strong>, work direction <strong>${data.dir}</strong>, and sleep direction <strong>${data.sleepDir}</strong>.`,
-            shadowTh: `ด้านเงาของดาว ${star} คือ ${star === 1 ? 'ความโลเลและดูดซับพลังลบจากคนอื่น — น้ำซึมพิษได้ง่าย' : star === 2 ? 'การทำงานหนักจนถูกใช้โดยไม่รู้ตัว — ดินให้ทุกคน ต้องรู้ว่าเมื่อไหร่ควรหยุดให้' : star === 3 ? 'ความใจร้อนและไม่จบสิ่งที่เริ่ม — ฟ้าผ่ามาเร็วแต่หายเร็ว' : star === 4 ? 'การโลเลในทิศทาง — ลมพัดไปทุกที่จึงไม่ถึงไหน' : star === 5 ? 'ความผันผวนและอุบัติเหตุใหญ่ — ดาวกลางต้องระวังตลอด โดยเฉพาะในปีที่ดาว 5 ไปตำแหน่งตะวันออก' : star === 6 ? 'ความหยิ่งและไม่ฟังใคร — ฟ้าไกลจากดินมาก' : star === 7 ? 'การใช้จ่ายฟุ่มเฟือยและรักสบาย — ทะเลสาบที่สวยแต่ตื้น' : star === 8 ? 'ความเฉื่อยและต้านการเปลี่ยนแปลง — ภูเขาเคลื่อนยาก' : 'ความหยิ่งและการเผาคนรอบข้าง — ไฟสว่างแต่เผาได้'} ปี 2026 ซึ่งเป็นปีดาว 9 ไฟ — ${star === 9 ? 'Honmei-sei Kaiki (本命星回帰) ดาวของคุณตรงกับปี! ต้องระวังเป็นพิเศษ ทำดีผลดี ทำไม่ดีผลไม่ดี ขยายเท่าตัว' : 'พลังงานไฟจะมีอิทธิพลกับคุณ — ระวังการใช้ความเข้มของปีให้ถูกทิศทาง'}`,
-            shadowEn: `The shadow side of Star ${star} is ${star === 1 ? 'indecisiveness and absorbing other people\'s negative energy — water takes in poison easily' : star === 2 ? 'overworking until you\'re exploited unconsciously — Earth gives to everyone; you must know when to stop giving' : star === 3 ? 'impatience and leaving things unfinished — lightning strikes fast but fades fast' : star === 4 ? 'wavering on direction — wind blowing everywhere reaches nowhere' : star === 5 ? 'volatility and major accidents — the central star must stay vigilant, especially in years when Star 5 visits the East' : star === 6 ? 'pride and refusing to listen — the heavens stand far from the earth' : star === 7 ? 'overspending and chasing comfort — a beautiful but shallow lake' : star === 8 ? 'inertia and resistance to change — mountains are slow to move' : 'pride and burning those around you — fire is bright, but it can scorch'}. In 2026 (Year of Fire Star 9) — ${star === 9 ? 'Honmei-sei Kaiki (本命星回帰): your star matches the year! Extra caution required — good actions multiply, poor ones too. Everything you do amplifies' : 'the year\'s Fire energy will lean on you — be deliberate about where you direct that intensity'}.`,
+            shadowTh: `ด้านเงาของดาว ${star} คือ ${star === 1 ? 'ความโลเลและดูดซับพลังลบจากคนอื่น — น้ำซึมพิษได้ง่าย' : star === 2 ? 'การทำงานหนักจนถูกใช้โดยไม่รู้ตัว — ดินให้ทุกคน ต้องรู้ว่าเมื่อไหร่ควรหยุดให้' : star === 3 ? 'ความใจร้อนและไม่จบสิ่งที่เริ่ม — ฟ้าผ่ามาเร็วแต่หายเร็ว' : star === 4 ? 'การโลเลในทิศทาง — ลมพัดไปทุกที่จึงไม่ถึงไหน' : star === 5 ? 'ความผันผวนและอุบัติเหตุใหญ่ — ดาวกลางต้องระวังตลอด โดยเฉพาะในปีที่ดาว 5 ไปตำแหน่งตะวันออก' : star === 6 ? 'ความหยิ่งและไม่ฟังใคร — ฟ้าไกลจากดินมาก' : star === 7 ? 'การใช้จ่ายฟุ่มเฟือยและรักสบาย — ทะเลสาบที่สวยแต่ตื้น' : star === 8 ? 'ความเฉื่อยและต้านการเปลี่ยนแปลง — ภูเขาเคลื่อนยาก' : 'ความหยิ่งและการเผาคนรอบข้าง — ไฟสว่างแต่เผาได้'}`,
+            shadowEn: `The shadow side of Star ${star} is ${star === 1 ? 'indecisiveness and absorbing other people\'s negative energy — water takes in poison easily' : star === 2 ? 'overworking until you\'re exploited unconsciously — Earth gives to everyone; you must know when to stop giving' : star === 3 ? 'impatience and leaving things unfinished — lightning strikes fast but fades fast' : star === 4 ? 'wavering on direction — wind blowing everywhere reaches nowhere' : star === 5 ? 'volatility and major accidents — the central star must stay vigilant, especially in years when Star 5 visits the East' : star === 6 ? 'pride and refusing to listen — the heavens stand far from the earth' : star === 7 ? 'overspending and chasing comfort — a beautiful but shallow lake' : star === 8 ? 'inertia and resistance to change — mountains are slow to move' : 'pride and burning those around you — fire is bright, but it can scorch'}..`,
             practiceTh: `Nine Star Ki ในชีวิตประจำวัน: (1) หันหัวนอนไปทาง<strong>${data.sleepDir}</strong> ทุกคืน — Feng Shui ญี่ปุ่นถือว่าส่งผลต่อคุณภาพการนอน ฝัน และพลังวันรุ่งขึ้น (2) จัดโต๊ะทำงานให้หันหน้าไปทาง<strong>${data.dir}</strong> — ทิศที่ดาวของคุณได้รับพลัง Qi มากที่สุด (3) ใส่สี<strong>${data.color}</strong> อย่างน้อย 1 ชิ้นต่อวัน (เสื้อ เข็มขัด กระเป๋า) เป็น "energy antenna" (4) ติดตาม "Honmei-sei" (ตำแหน่งดาวของคุณในปี) ทุกเดือน — มีปฏิทิน Nine Star Ki ญี่ปุ่นแจกฟรีออนไลน์`,
             practiceEn: `Nine Star Ki in daily life: (1) Sleep with your head pointing <strong>${data.sleepDir}</strong> every night — Japanese Feng Shui treats this as critical for sleep quality, dreams, and next-day energy. (2) Orient your work desk to face <strong>${data.dir}</strong> — the direction your star receives Qi most fully. (3) Wear <strong>${data.color}</strong> as at least one item per day (shirt, belt, bag) as an "energy antenna". (4) Track your "Honmei-sei" (your star\'s monthly position) — free Japanese Nine Star Ki calendars are available online.`,
-            currentYearTh: `ปี 2026 (ดาวปี 9 ไฟ) — ${star === 9 ? 'Honmei-sei Kaiki สำหรับคุณ! ปีที่สำคัญที่สุดในวงจร 9 ปี ทุกการกระทำขยายผลทั้ง 2 ทาง — ทำสิ่งที่อยากให้โลกจำไว้' : 'ดาว ' + star + ' ของคุณจะไปอยู่ในตำแหน่งที่ต่างจากปีที่แล้ว เปลี่ยนวิธีที่ "ฟ้าคุย" กับคุณปีนี้'} ทิศหลีกเลี่ยงในปี 2026 คือทิศตะวันตกเฉียงใต้ (ดาว 5 ไปนั่น) — อย่าเคลื่อนไหวใหญ่หรือขุดดินในทิศนั้น`,
-            currentYearEn: `2026 (Year of Fire Star 9) — ${star === 9 ? 'Honmei-sei Kaiki for you! The most consequential year in the 9-year cycle. Every action amplifies in both directions — do the things you want the world to remember' : 'your Star ' + star + ' moves to a different position than last year, changing the way the "heavens speak" to you this year'}. The direction to avoid in 2026 is southwest (where Star 5 sits) — don\'t make major moves or break ground in that direction.`,
+            currentYearTh: `ปี 2026 เป็นปีดาว 1 (一白水星 ธาตุน้ำ)${star === 1 ? ' — ตรงกับดาวประจำตัวคุณ (Honmei-sei Kaiki 本命星回帰)' : ''}`,
+            currentYearEn: `2026 is a Star 1 year (一白水星, Water)${star === 1 ? ' — the same star as yours: Honmei-sei Kaiki (本命星回帰)' : ''}.`,
             closingTh: 'Nine Star Ki บอกไว้ว่า — "รู้จังหวะของฟ้า คุณไม่ต้องฝืน จะลื่นไหลไปเอง" — ฟ้าไม่เคยผิด ดาวไม่เคยโกหก เรียนรู้ที่จะฟังคือศิลปะของ 九星気学',
             closingEn: 'Nine Star Ki teaches: "Know the rhythm of the heavens, and you won\'t need to force — life will flow on its own." The sky never errs, the stars never lie. Learning to listen is the art of 九星気学.',
         }),
@@ -2456,13 +2466,17 @@ function _mayanDeepSections(a) {
     return sec.join('');
 }
 function calcMayan(d) {
-    // Anchor: Jan 1, 2000 = Kin 1 (1 Imix)
-    // JDN of Jan 1, 2000 (noon) = 2451545
-    const refJD = 2451545.0;
+    // Anchor: the GMT correlation (584283), the standard one in Maya epigraphy.
+    // Long Count 0.0.0.0.0 = 4 Ahau 8 Cumku = JDN 584283, and 4 Ahau sits at
+    // Kin 160 of the 260-day round, hence the +159 to make `kin` zero-based.
+    //
+    // The previous anchor asserted "Jan 1 2000 = Kin 1 (1 Imix)" with no source,
+    // and it was wrong by 101 kin — every Mayan sign and tone the engine has
+    // produced was off. The check that catches it is the most public date in
+    // Maya calendrics: 2012-12-21, the close of the 13th b'ak'tun, is 4 Ahau /
+    // Kin 160. The old anchor called that day Kin 59, tone 7.
     const birthJD = Math.floor(toJD(d.year, d.month, d.day, 12));
-    const refJDFloor = Math.floor(refJD);
-    const diff = birthJD - refJDFloor;
-    const kin = ((diff % 260) + 260) % 260;
+    const kin = ((birthJD - 584283 + 159) % 260 + 260) % 260;
     const signIdx = kin % 20;
     const toneIdx = kin % 13;
     const sign = MAYAN_SIGNS[signIdx];
@@ -4178,10 +4192,10 @@ function calculate(d) {
     const tibetan = calcTibetan(d);
     const ziwei = calcZiWei(d);
     const onmyodo = calcOnmyodo(d);
-    const hellenistic = calcHellenistic(d);
+    const hellenistic = calcHellenistic(d, western);
     const norseRune = calcNorseRune(d);
     const ogham = calcOgham(d);
-    const arabicParts = calcArabicParts(d);
+    const arabicParts = calcArabicParts(d, western);
     const kabbalistic = calcKabbalistic(d);
     const zoroastrian = calcZoroastrian(d);
     const aztec = calcAztec(d);
@@ -5103,9 +5117,15 @@ function calcOnmyodo(d) {
     return onmyodoResult;
 }
 // ── HELLENISTIC ASTROLOGY ───────────────────────────────────────
-function calcHellenistic(d) {
-    // Sect: daytime birth (6:00-18:00) = day sect; favors Sun, Jupiter, Saturn
-    const isDaySect = d.hour >= 6 && d.hour < 18;
+function calcHellenistic(d, w) {
+    // Sect is whether the Sun was above or below the horizon at birth — the single
+    // most load-bearing distinction in Hellenistic astrology. The old test was the
+    // clock (06:00-18:00), which is wrong by up to a couple of hours at Bangkok's
+    // latitude and by far more further north. Measured properly: the houses that
+    // sit above the horizon are 7 through 12, i.e. 180-360 degrees counted from
+    // the Ascendant, so the Sun is above the horizon exactly when that arc holds it.
+    const sunFromAsc = ((w.sunDeg - w.ascDeg) % 360 + 360) % 360;
+    const isDaySect = sunFromAsc >= 180;
     const sect = isDaySect ? 'Day Sect' : 'Night Sect';
     const sectTh = isDaySect
         ? tPick('เกิดกลางวัน — Sun/Jupiter/Saturn หนุน', 'Day birth — Sun/Jupiter/Saturn favoured')
@@ -5113,11 +5133,14 @@ function calcHellenistic(d) {
     const trigonLord = isDaySect
         ? tPick('Jupiter (การขยายตัว)', 'Jupiter (expansion)')
         : tPick('Venus (ความสัมพันธ์)', 'Venus (relationships)');
-    // Lot of Fortune: ASC + Moon - Sun (day) or ASC + Sun - Moon (night)
-    // Use simplified: derive from birth data
-    const ASC_DEG = (d.lat * 2 + d.hour * 15 + d.minute / 4) % 360;
-    const sunDeg = ((d.month - 1) * 30 + (d.day - 1)) % 360;
-    const moonDeg = ((d.year * 13 + d.month * 7 + d.day * 3 + d.hour) % 360);
+    // Lot of Fortune: ASC + Moon - Sun (day) or ASC + Sun - Moon (night).
+    // The formula was already right; it was being fed invented numbers — an
+    // "ascendant" derived from latitude and clock time, a "Sun" that was really
+    // the calendar date, and a "Moon" that was a hash of y/m/d. The engine has
+    // computed the real three all along (calcWestern), so use those.
+    const ASC_DEG = w.ascDeg;
+    const sunDeg = w.sunDeg;
+    const moonDeg = w.moonDeg;
     const lotRaw = isDaySect
         ? (ASC_DEG + moonDeg - sunDeg + 360) % 360
         : (ASC_DEG + sunDeg - moonDeg + 360) % 360;
@@ -5446,14 +5469,17 @@ function _arabicPartsDeepSections(a) {
     return _dsSort(sec, ['📜', '🧬', '💼', '💰', '❤️', '🩺', '📅', '🎨', '💬']);
 }
 // ── ARABIC PARTS ─────────────────────────────────────────────────
-function calcArabicParts(d) {
+function calcArabicParts(d, w) {
     const SIGNS_TH = ['เมษ', 'พฤษภ', 'เมถุน', 'กรกฎ', 'สิงห์', 'กันย์', 'ตุลย์', 'พิจิก', 'ธนู', 'มกร', 'กุมภ์', 'มีน'];
     const SIGNS_EN = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
     const SIGN_SCORES = [760, 800, 750, 710, 820, 730, 780, 720, 800, 740, 760, 730];
-    const isDaySect = d.hour >= 6 && d.hour < 18;
-    const ASC = (d.lat * 2 + d.hour * 15 + d.minute / 4) % 360;
-    const sun = ((d.month - 1) * 30 + d.day) % 360;
-    const moon = ((d.year * 13 + d.month * 7 + d.day * 3) % 360);
+    // Same story as calcHellenistic: correct Lot formulas, invented inputs.
+    // Both Lots and the sect test now run on the real ascendant, Sun and Moon.
+    const sunFromAsc = ((w.sunDeg - w.ascDeg) % 360 + 360) % 360;
+    const isDaySect = sunFromAsc >= 180;
+    const ASC = w.ascDeg;
+    const sun = w.sunDeg;
+    const moon = w.moonDeg;
     const fortune = isDaySect ? (ASC + moon - sun + 360) % 360 : (ASC + sun - moon + 360) % 360;
     const spirit = isDaySect ? (ASC + sun - moon + 360) % 360 : (ASC + moon - sun + 360) % 360;
     const fSign = Math.floor(fortune / 30);
