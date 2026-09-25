@@ -1918,7 +1918,7 @@ function calcNineStar(d) {
             shadowTh: `ด้านเงาของดาว ${star} คือ ${star === 1 ? 'ความโลเลและดูดซับพลังลบจากคนอื่น — น้ำซึมพิษได้ง่าย' : star === 2 ? 'การทำงานหนักจนถูกใช้โดยไม่รู้ตัว — ดินให้ทุกคน ต้องรู้ว่าเมื่อไหร่ควรหยุดให้' : star === 3 ? 'ความใจร้อนและไม่จบสิ่งที่เริ่ม — ฟ้าผ่ามาเร็วแต่หายเร็ว' : star === 4 ? 'การโลเลในทิศทาง — ลมพัดไปทุกที่จึงไม่ถึงไหน' : star === 5 ? 'ความผันผวนและอุบัติเหตุใหญ่ — ดาวกลางต้องระวังตลอด โดยเฉพาะในปีที่ดาว 5 ไปตำแหน่งตะวันออก' : star === 6 ? 'ความหยิ่งและไม่ฟังใคร — ฟ้าไกลจากดินมาก' : star === 7 ? 'การใช้จ่ายฟุ่มเฟือยและรักสบาย — ทะเลสาบที่สวยแต่ตื้น' : star === 8 ? 'ความเฉื่อยและต้านการเปลี่ยนแปลง — ภูเขาเคลื่อนยาก' : 'ความหยิ่งและการเผาคนรอบข้าง — ไฟสว่างแต่เผาได้'}`,
             shadowEn: `The shadow side of Star ${star} is ${star === 1 ? 'indecisiveness and absorbing other people\'s negative energy — water takes in poison easily' : star === 2 ? 'overworking until you\'re exploited unconsciously — Earth gives to everyone; you must know when to stop giving' : star === 3 ? 'impatience and leaving things unfinished — lightning strikes fast but fades fast' : star === 4 ? 'wavering on direction — wind blowing everywhere reaches nowhere' : star === 5 ? 'volatility and major accidents — the central star must stay vigilant, especially in years when Star 5 visits the East' : star === 6 ? 'pride and refusing to listen — the heavens stand far from the earth' : star === 7 ? 'overspending and chasing comfort — a beautiful but shallow lake' : star === 8 ? 'inertia and resistance to change — mountains are slow to move' : 'pride and burning those around you — fire is bright, but it can scorch'}..`,
             practiceTh: `Nine Star Ki ในชีวิตประจำวัน: (1) หันหัวนอนไปทาง<strong>${data.sleepDir}</strong> ทุกคืน — Feng Shui ญี่ปุ่นถือว่าส่งผลต่อคุณภาพการนอน ฝัน และพลังวันรุ่งขึ้น (2) จัดโต๊ะทำงานให้หันหน้าไปทาง<strong>${data.dir}</strong> — ทิศที่ดาวของคุณได้รับพลัง Qi มากที่สุด (3) ใส่สี<strong>${data.color}</strong> อย่างน้อยวันละชิ้น`,
-            practiceEn: `Nine Star Ki in daily life: (1) Sleep with your head pointing <strong>${data.sleepDir}</strong> every night — Japanese Feng Shui treats this as critical for sleep quality, dreams, and next-day energy. (2) Orient your work desk to face <strong>${data.dir}</strong> — the direction your star receives Qi most fully. (3) Wear <strong>${data.color}</strong> as at least one item a day.`,
+            practiceEn: `Nine Star Ki in daily life: (1) Sleep with your head pointing <strong>${pDir(data.sleepDir)}</strong> every night — Japanese Feng Shui treats this as critical for sleep quality, dreams, and next-day energy. (2) Orient your work desk to face <strong>${pDir(data.dir)}</strong> — the direction your star receives Qi most fully. (3) Wear <strong>${pColor(data.color)}</strong> as at least one item a day.`,
             currentYearTh: `ปี 2026 เป็นปีดาว 1 (一白水星 ธาตุน้ำ)${star === 1 ? ' — ตรงกับดาวประจำตัวคุณ (Honmei-sei Kaiki 本命星回帰)' : ''}`,
             currentYearEn: `2026 is a Star 1 year (一白水星, Water)${star === 1 ? ' — the same star as yours: Honmei-sei Kaiki (本命星回帰)' : ''}.`,
             closingTh: 'Nine Star Ki บอกไว้ว่า — "รู้จังหวะของฟ้า คุณไม่ต้องฝืน จะลื่นไหลไปเอง" — ฟ้าไม่เคยผิด ดาวไม่เคยโกหก เรียนรู้ที่จะฟังคือศิลปะของ 九星気学',
@@ -5429,10 +5429,12 @@ const _TR_SAJU = {
 // วัดใหม่อีกรอบเมื่อต่อโอแฮมเข้ามาเป็นตัวที่ 25 (เลื่อนอีก 0.54)
 // และวัดอีกรอบ 2 ก.ย. เมื่อถอด เลข ๗ ตัว ๙ ฐาน ออกเพราะสูตรผิด — เหลือ 24 ศาสตร์
 //    ด่าน traits จะจับได้เองถ้าค่าที่ตรึงไว้เลื่อนจากของจริง
+// และวัดอีกรอบ 24 ก.ย. 69 เมื่อถอดอิฟา (ตัวแทนการเสี่ยง ไม่ใช่ตำรา) + ทิเบตงดเสียงในเดือนจันทรคติที่ 1 (8% ของดวง)
+//    เหลือ 23 ศาสตร์ (22 เมื่อทิเบตงด) · สุ่ม 3,000 ดวง seed 20260924 · เลื่อนมากสุด instinct −0.78
 const _TRAIT_BASELINE = {
-    pace: [-3.19, 5.51], initiative: [4.84, 4.90], social: [10.27, 4.68],
-    instinct: [6.57, 4.64], expression: [4.61, 5.89], change: [2.16, 4.42],
-    risk: [1.63, 4.16], root: [0.29, 3.13], structure: [6.84, 5.11], focus: [8.09, 4.42],
+    pace: [-3.37, 5.37], initiative: [4.35, 4.84], social: [9.67, 4.55],
+    instinct: [5.79, 4.55], expression: [4.32, 5.60], change: [1.83, 4.35],
+    risk: [1.17, 4.02], root: [0.54, 3.17], structure: [6.89, 5.08], focus: [7.43, 4.34],
 };
 // ชื่อศาสตร์ไว้บอกว่าใครโหวตฝั่งไหน
 const _TR_SYS_TH = {
@@ -5540,7 +5542,9 @@ function _attachTraits(c) {
     put('hellenistic', _TR_SECT[/Night/i.test(String(c.hellenistic?.sect)) ? 'night' : 'day'], `${c.hellenistic?.sect} — หลัก hairesis สายกลางวัน/กลางคืน`, `${c.hellenistic?.sect} — the doctrine of hairesis, day and night sects`);
     put('onmyodo', _TR_ONMYO[/หยาง|Yang/i.test(String(c.onmyodo?.onmyoPolarity)) ? 'yang' : 'yin'], `ขั้ว ${c.onmyodo?.onmyoPolarity} — หลักอินโย (陰陽)`, `${c.onmyodo?.onmyoPolarity} polarity — the yin-yang principle (陰陽)`);
     put('kabbalistic', _TR_SEPHIRA[c.kabbalistic?.sephira], `เซฟิรา ${c.kabbalistic?.sephira} — หน้าที่ประจำองค์บนต้นไม้แห่งชีวิต`, `Sephira ${c.kabbalistic?.sephira} — the function each holds on the Tree of Life`);
-    put('tibetan', _TR_PARKHA[String(c.tibetan?.parkha)], `ปาร์คา ${c.tibetan?.parkhaName} — ตรีลักษณ์ที่คิวงาคุไม่ได้ใช้ (ไม่ใช่ Mewa ซึ่งซ้ำกับดาวเก้าดวง)`, `Parkha ${c.tibetan?.parkha} — the trigram layer kigaku does not use (not the Mewa, which echoes Nine Star Ki)`);
+    // 24 ก.ย. 69 — เกิดในเดือนจันทรคติที่ 1 ปีทิเบตยังไม่แน่ชัด (Losar อาจช้ากว่าตรุษจีนหนึ่งเดือน) ⇒ งดออกเสียง
+    if (!c.tibetan?.yearUncertain)
+        put('tibetan', _TR_PARKHA[String(c.tibetan?.parkha)], `ปาร์คา ${c.tibetan?.parkhaName} — ตรีลักษณ์ที่คิวงาคุไม่ได้ใช้ (ไม่ใช่ Mewa ซึ่งซ้ำกับดาวเก้าดวง)`, `Parkha ${c.tibetan?.parkha} — the trigram layer kigaku does not use (not the Mewa, which echoes Nine Star Ki)`);
     {
         // Fortune = สิ่งที่มาถึงเราเอง · Spirit = สิ่งที่เราตั้งใจทำ · อ่านจากมุมระหว่างสองจุด
         const fo = Number(c.arabicParts?.partOfFortune), sp = Number(c.arabicParts?.partOfSpirit);
@@ -5554,6 +5558,9 @@ function _attachTraits(c) {
             put('arabicParts', _TR_LOTS[rel], `Lot of Fortune กับ Lot of Spirit ${relTh} (ห่าง ${Math.round(sep)}°) — สิ่งที่มาถึงเทียบกับสิ่งที่ตั้งใจ`, `The Lot of Fortune and the Lot of Spirit are ${Math.round(sep)}° apart — what arrives set against what you intend`);
         }
     }
+    // ℹ️ 24 ก.ย. 69 — เคยคิดจะถอดเพราะใช้ตำแหน่ง 260 วันเดียวกับมายา แต่ **director ตัดสินแล้ว 1 ก.ย.**:
+    //    "แฝดต้องเงียบ" เหมารวมเกินไป · แฝดพูดได้ถ้าพิสูจน์ว่าไม่ใช่เสียงสะท้อน (tests/traits.test.cjs TWIN_PAIRS)
+    //    วัดแล้ว mayan↔aztec ต่างกัน 100% ของดวง · สวนทางจริง 27% ⇒ สองเสียงได้ · ห้ามถอดโดยไม่มีผลวัดใหม่
     put('aztec', _TR_AZTEC[String(c.aztec?.daySign)], `${c.aztec?.daySign} (${c.aztec?.daySignTh}) — คำบรรยายสัญลักษณ์ฝั่งแอซเท็ก ซึ่งคนละชุดกับชื่อมายาที่ตำแหน่งเดียวกัน`, `${c.aztec?.daySign} — the Aztec characterisation of this sign, a different set from the Mayan name at the same position`);
     {
         // ⛔ ถอดเสียงของ เลข ๗ ตัว ๙ ฐาน ออกจากชั้นเทียบศาสตร์ 2 ก.ย. 69
@@ -5601,7 +5608,10 @@ function _attachTraits(c) {
     put('celtic', _TR_CELTIC[c.celtic?.treeName], `ต้น${c.celtic?.treeNameTh} — บุคลิกประจำต้นในปฏิทินต้นไม้ของ Graves`, `${c.celtic?.treeName} — the character Graves gives this tree in the tree calendar`);
     put('norseRune', _TR_RUNE[c.norseRune?.runeName], `รูน ${c.norseRune?.runeName} — ความหมายประจำรูนใน Elder Futhark`, `Rune ${c.norseRune?.runeName} — its meaning in the Elder Futhark`);
     put('nativeAmerican', _TR_TOTEM[c.nativeAmerican?.birthTotem], `โทเท็ม ${c.nativeAmerican?.birthTotem} — คำบรรยายนิสัยประจำโทเท็มตามเดือนเกิด`, `Totem ${c.nativeAmerican?.birthTotem} — the character given to this birth-month totem`);
-    put('ifaYoruba', _TR_ODU[String(c.ifaYoruba?.odu)], `Odù ${c.ifaYoruba?.odu} — ธีมประจำ Odù ในตำราอิฟา`, `Odù ${c.ifaYoruba?.odu} — the theme this Odù carries in Ifá`);
+    // ⛔ 24 ก.ย. 69 — ถอดเสียงอิฟาออกจากชั้นเทียบศาสตร์ (หลัก consensus: ออกเสียงได้เฉพาะศาสตร์ที่อ่านจากวันเกิดตามหลักวิชาตัวเอง)
+    //    Odù ได้จากการเสี่ยง (ọ̀pẹ̀lẹ̀) โดยบาบาลาโว — ไม่มีสายไหนอ่านจากวันเกิด · calcIfaYoruba เองก็บอกว่าเป็น
+    //    "ตัวแทนแบบกำหนดแน่นอน" ของการเสี่ยง ไม่ใช่ตำรา ⇒ ให้ตัวแทนนั้นมาโหวตเท่ากับศาสตร์ที่คำนวณจริง = ปั้นเสียง
+    //    หน้าอ่านอิฟายังอยู่ (พร้อมคำบอกว่าเป็นตัวแทน) · ตาราง _TR_ODU เก็บไว้
     put('ziwei', _TR_ZIWEI[String(c.ziwei?.mainStar)], `ดาว ${c.ziwei?.mainStar} — บุคลิกประจำดาวหลักในตำราจื่อเวย`, `Star ${c.ziwei?.mainStar} — the character of this main star in Zi Wei doctrine`);
     // ทักษา — ใช้ดาวที่ตกภูมิกาลกิณี ไม่ใช่เจ้าวัน (เจ้าวันจะซ้ำกับไทยพราหมณ์)
     {
@@ -5962,11 +5972,18 @@ function _wuxingScore(today, natal) {
         return -1; // you control today's — friction but manageable
     return 0;
 }
+// ตัวคูณของสายที่มีวัฒนธรรมอื่นรับวิชาไปใช้ต่อ (director 15 ก.ย. 69)
+// วัด 365 วัน × 3 ดวง: ×1.0 → วันกลาง 35% · ×1.5 → 29% (วันมีความหมายขึ้น)
+// ×2.0 → พักฟื้นพุ่ง 3%→12% = บอกคนพักหนึ่งในแปดวัน มากเกินจริง ⇒ เลือก 1.5
+// 🔄 แก้เลขนี้เมื่อไหร่ ต้องรัน _tools/verdict-baseline.cjs วัดเกณฑ์ใหม่เสมอ
+// ⚠️ 24 ก.ย. 69 — ทั้งก้อน 15 ก.ย. นี้เคยอยู่แค่ใน bundle ที่ขึ้น prod ซอร์สไม่เคยได้รับ ⇒ กู้กลับจาก bundle
+//    (เจอตอน build ใหม่แล้ว diff กับของบน prod) · build จากซอร์สโดยไม่เช็ค diff = ถอยงานของ director ทั้งก้อน
+const HEIR_WEIGHT = 1.5;
 const VERDICT_TIERS = [
-    { min: 4, key: 'peak', emoji: '🌟', th: 'วันทอง', en: 'Peak day' },
+    { min: 5, key: 'peak', emoji: '🌟', th: 'วันทอง', en: 'Peak day' }, // 4→5 เมื่อใส่น้ำหนัก 15 ก.ย. — วัด 18,000 ค่าแล้ว min 4 ให้วันทอง 33% (1 ใน 3 วัน)
     { min: 2, key: 'supportive', emoji: '🟢', th: 'หนุน', en: 'Supportive' },
     { min: -1, key: 'neutral', emoji: '🟡', th: 'กลาง', en: 'Neutral' },
-    { min: -3, key: 'observe', emoji: '🟠', th: 'สังเกต', en: 'Observe' },
+    { min: -4, key: 'observe', emoji: '🟠', th: 'สังเกต', en: 'Observe' }, // -3→-4 เมื่อปัดแบบสมมาตร 15 ก.ย. — ไม่งั้น 'พักฟื้น' โผล่ 8% (1 ใน 12 วัน) ทั้งที่เดิม 3%
     { min: -99, key: 'rest', emoji: '🔴', th: 'พักฟื้น', en: 'Rest-recovery' },
 ];
 const SIGN_NAMES_EN = ['Aries', 'Taurus', 'Gemini', 'Cancer', 'Leo', 'Virgo', 'Libra', 'Scorpio', 'Sagittarius', 'Capricorn', 'Aquarius', 'Pisces'];
@@ -6115,7 +6132,9 @@ function calcDailyPulse(c, date, opts = {}) {
         // ⛔ ไม่โหวต — มติ 2026-06-06: 26 ศาสตร์ = 8 เสียงโหวต + 18 งดออกเสียง และ
         // ไบโอริทึมอยู่ฝั่งงดออกเสียง เพราะมันคำนวณจากจำนวนวันที่ผ่านมา ไม่ได้อ่านดวง
         // ค่าที่คิดได้ยังแสดงเป็นบริบทได้ แต่ห้ามเอาไปบวกเป็นคำตัดสินของวัน
-        score: 0,
+        score: 0, counted: false,
+        noCountTh: 'คำนวณจากจำนวนวันที่ผ่านมานับจากวันเกิด ไม่ได้อ่านดวง — เป็นบริบท ไม่ใช่เสียงตัดสิน',
+        noCountEn: 'Computed from days elapsed since birth, not from a chart — context, not a vote',
         velocity: 'daily',
     });
     // 8. ไทยพราหมณ์ — day-of-week ruler (changes 7-day cycle)
@@ -6140,9 +6159,71 @@ function calcDailyPulse(c, date, opts = {}) {
         // ไม่ใช่ข่าวของวันนี้ ไม่งั้นเขาจะอ่านซ้ำทุกวันแล้วคิดว่าระบบค้าง
         noteTh: `อยู่ในทศา${c.vedicMahadasha.currentDasha} — ฉากหลังของช่วงชีวิต ไม่ใช่เรื่องเฉพาะวันนี้`,
         noteEn: `In the ${c.vedicMahadasha.currentDasha} Dasha — the backdrop of this life phase, not news about today`,
-        score: 0,
+        score: 0, counted: false,
+        noCountTh: 'ทศาเปลี่ยนทีละหลายปี — เป็นฉากหลังของช่วงชีวิต ไม่ใช่คะแนนของวันนี้',
+        noCountEn: 'A dasha turns over years — the backdrop of a life phase, not a score for today',
         velocity: 'natal',
     });
+    // ── เสียงสมทบ: สายที่รับวิชาชุดเดียวกันไปใช้ต่อ ────────────
+    // director 15 ก.ย. 69: "ซ้ำก็ซ้ำ เพราะมันนิยมไปไกลมันถึงซ้ำได้
+    //   ควรมีน้ำหนักมากกว่าศาสตร์เงียบๆ"
+    // ⇒ สายที่วัฒนธรรมอื่นรับไปใช้ต่อ = ผ่านการใช้งานจริงหลายสำนัก ให้หนักขึ้น
+    //
+    // ⛔ ห้ามให้สายสมทบโหวตเป็นเสียงที่สอง (= ×2.0) — วัดจริง 365 วัน × 3 ดวง
+    //    แล้วคำตัดสินเปลี่ยน 43-45% ของวัน และ "พักฟื้น" พุ่งจาก 3% → 12%
+    //    ⇒ ใช้ตัวคูณ HEIR_WEIGHT กับ**เสียงต้นทาง** แล้วแสดงสายสมทบเป็น
+    //      บรรทัดที่อ่านได้แต่ไม่บวกคะแนนซ้ำ (counted:false)
+    //
+    // ⛔ ทิเบตไม่อยู่ในชุดนี้ — Mewa ในเอนจินเราเป็นรอบ**ปี** (calcTibetan อ่านจาก
+    //    adjYear) ไม่ใช่รอบวัน จึงไม่ใช่ฝาแฝดของดาววัน การเอามาใส่ชั้นรายวัน
+    //    ต้องเขียนสูตร mewa รายวันขึ้นเอง = แต่ง ⇒ ทิเบตไปอยู่ชั้นรายปี/ล่วงหน้าแทน
+    //
+    // ทั้งสามข้างล่างพิสูจน์ได้จากโค้ดเราเองว่าเป็น "ตำแหน่งเดียวกัน คนละชื่อ":
+    //   ซาจู  = เสาวันชุดเดียวกับ BaZi (อักษรจีนชุดเดียวกัน)
+    //   แอซเท็ก = ((jd-584283+159)%260) ตัวเดียวกับที่ calcAztec ใช้เป๊ะ
+    //   ทักษา = เจ้าวันจาก dow ตัวเดียวกับไทยพราหมณ์
+    //   🪤 ชั้น forecast สลับข้าง (ทักษาเป็นผู้โหวต ไทยพราหมณ์งด) — ที่นี่ตรงข้าม
+    //      เพราะชั้นรายวันมีไทยพราหมณ์อยู่ก่อนแล้ว ห้ามสลับตามโดยไม่วัดใหม่ (Rule #2)
+    const AZ_SIGNS_TH = ['จระเข้', 'ลม', 'บ้าน', 'จิ้งจก', 'งู', 'ความตาย', 'กวาง', 'กระต่าย', 'น้ำ', 'สุนัข', 'ลิง', 'หญ้า', 'อ้อ', 'เสือจากัวร์', 'อินทรี', 'แร้ง', 'การเคลื่อนไหว', 'หินเหล็กไฟ', 'ฝน', 'ดอกไม้'];
+    const AZ_SIGNS_EN = ['Cipactli', 'Ehecatl', 'Calli', 'Cuetzpallin', 'Coatl', 'Miquiztli', 'Mazatl', 'Tochtli', 'Atl', 'Itzcuintli', 'Ozomatli', 'Malinalli', 'Acatl', 'Ocelotl', 'Cuauhtli', 'Cozcacuauhtli', 'Ollin', 'Tecpatl', 'Quiahuitl', 'Xochitl'];
+    const azIdx = kinIdx % 20;
+    candidates.push({
+        sys: 'Saju Day', sysTh: 'ซาจู (เกาหลี)', sysEn: 'Saju',
+        noteTh: `อิลจิน (일진) ${dayP.stem}${dayP.branch} — ซาจูอ่านเสาวันชุดเดียวกับ BaZi`,
+        noteEn: `Iljin (일진) ${dayP.stem}${dayP.branch} — Saju reads the same day pillar as BaZi`,
+        score: 0, counted: false, echoOf: 'BaZi Day',
+        noCountTh: 'ใช้เสาสี่หลักชุดเดียวกับ BaZi — นับคะแนนซ้ำจะทำให้สายจีนมีสองเสียง',
+        noCountEn: 'Same four pillars as BaZi — counting it twice would give one tradition two voices',
+        velocity: 'daily',
+    });
+    candidates.push({
+        sys: 'Aztec Day', sysTh: 'แอซเท็ก', sysEn: 'Aztec',
+        noteTh: `${AZ_SIGNS_TH[azIdx]} (${AZ_SIGNS_EN[azIdx]}) · โทน ${tone} — ตำแหน่งเดียวกับ Kin ${kin} ของมายา`,
+        noteEn: `${AZ_SIGNS_EN[azIdx]} · tone ${tone} — the same position the Maya call Kin ${kin}`,
+        score: 0, counted: false, echoOf: 'Mayan Kin',
+        noCountTh: 'โทนัลโปวัลลีกับปฏิทินมายาคือรอบ 260 วันชุดเดียวกัน คนละชุดชื่อ',
+        noCountEn: 'The tonalpohualli and the Maya count are one 260-day cycle under two name sets',
+        velocity: 'daily',
+    });
+    candidates.push({
+        sys: 'Taksa Day', sysTh: 'ทักษา ๘ บ้าน', sysEn: 'Thai Taksa',
+        noteTh: `เจ้าวัน${DAY_TH[dow]} — ทักษาอ่านเจ้าวันชุดเดียวกับไทยพราหมณ์`,
+        noteEn: `Day-lord ${DAY_EN[dow]} — Taksa reads the same weekday ruler as Thai Brahmin`,
+        score: 0, counted: false, echoOf: 'Thai Brahmin',
+        noCountTh: 'อ่านเจ้าวันจากวันในสัปดาห์ชุดเดียวกัน — สัญญาณถูกนับไปแล้วหนึ่งรอบ',
+        noCountEn: 'Reads the day-lord from the same weekday — the signal is already cast once',
+        velocity: 'weekly',
+    });
+    // เสียงต้นทางที่มีสายรับไปใช้ต่อ ได้ตัวคูณน้ำหนัก
+    const HEIRS = {};
+    for (const sig of candidates)
+        if (sig.echoOf)
+            (HEIRS[sig.echoOf] = HEIRS[sig.echoOf] || []).push(sig.sysTh);
+    for (const sig of candidates) {
+        sig.weight = HEIRS[sig.sys] ? HEIR_WEIGHT : 1;
+        if (HEIRS[sig.sys])
+            sig.heirsTh = HEIRS[sig.sys];
+    }
     // ── Mark pinned + select up to 10 ───────────────────────
     for (const sig of candidates)
         if (pinned.has(sig.sys))
@@ -6155,9 +6236,16 @@ function calcDailyPulse(c, date, opts = {}) {
             return a.pinned ? -1 : 1;
         return (VELOCITY_RANK[b.velocity] ?? 0) - (VELOCITY_RANK[a.velocity] ?? 0);
     });
-    const selected = sorted.slice(0, 10);
+    // ⛔ เพดานเดิมคือ 10 — พอเติมบรรทัดสมทบ 3 เส้นแล้วจำนวนผู้เข้าชิงเป็น 12
+    //    ถ้าไม่ขยับ เสียงจริงจะถูกตัดทิ้งเงียบ ๆ (บทเรียนเดียวกับ whitelist ค้าง)
+    const selected = sorted.slice(0, 14);
     // ── Aggregate score + verdict ───────────────────────────
-    const total = selected.reduce((s, sig) => s + sig.score, 0);
+    // นับเฉพาะเสียงที่ counted ไม่ใช่ false และคูณน้ำหนักของสายที่มีผู้รับไปใช้ต่อ
+    // ปัดเป็นจำนวนเต็มก่อนเทียบเกณฑ์ เพื่อให้ตัวเลขที่โชว์กับตัวเลขที่ตัดสินเป็นตัวเดียวกัน
+    const _rawTotal = selected.reduce((s, sig) => s + (sig.counted === false ? 0 : sig.score * (sig.weight ?? 1)), 0);
+    // ⛔ Math.round(-1.5) = -1 แต่ Math.round(1.5) = 2 — ปัดแบบนั้นกับน้ำหนัก .5
+    //    จะเอียงบวกอย่างเป็นระบบ ต้องปัดให้สมมาตรรอบศูนย์
+    const total = Math.sign(_rawTotal) * Math.round(Math.abs(_rawTotal));
     const tier = VERDICT_TIERS.find(t => total >= t.min) ?? VERDICT_TIERS[VERDICT_TIERS.length - 1];
     // ── Synthesis paragraph ─────────────────────────────────
     // Pull the 3 highest-magnitude signals for the synthesis spotlight.
@@ -6171,6 +6259,10 @@ function calcDailyPulse(c, date, opts = {}) {
         verdictTh: tier.th,
         verdictEn: tier.en,
         signals: selected,
+        // ⛔ หน้าเว็บห้ามนับเอง — เคยเขียนว่า "N ศาสตร์ที่ให้คะแนน" โดยนับทุกแถว
+        //    ทั้งที่ไบโอริทึม/มหาทศา/เสียงสมทบ ไม่ได้บวกคะแนนเลย
+        countedCount: selected.filter(s => s.counted !== false).length,
+        echoCount: selected.filter(s => s.echoOf).length,
         pinnedCount: selected.filter(s => s.pinned).length,
         synthesisTh: synTh,
         synthesisEn: synEn,
@@ -7346,20 +7438,23 @@ function _fcPeriod(getDay, base, dates, kind, index, labelTh, labelEn, domBase) 
 // window from a birth date, (b) it has one but this engine has not implemented
 // it yet, (c) it would double-count a signal another system already casts.
 // Saying which is which is the whole point.
+// 📚 แหล่งอ้างอิงของแต่ละ "ไม่ออกเสียง" — ค้น 15 ก.ย. 69
+//    ⛔ ห้ามเขียนเหตุผลใหม่โดยไม่มี src — เหตุผลที่ไม่มีแหล่งคือความเห็นเรา ไม่ใช่หลักฐาน
+//    ชั้นนี้คือของที่จะขายในแพ็กรายเดือน ("เราตัดอะไรออกเพราะอะไร") จึงต้องอ้างได้ทุกบรรทัด
 const _FC_ABSTENTIONS = [
     { sysTh: 'ไทยพราหมณ์', sysEn: 'Thai Brahmin', whyTh: 'ให้ความหมายของวันเกิด ไม่ใช่วิชาทำนายช่วงเวลา — และสัญญาณวันในสัปดาห์ถูกนับไปแล้วโดยทักษา', whyEn: 'Reads the meaning of a birth weekday, not a timing technique — and the weekday signal is already cast by Taksa' },
     { sysTh: 'ซาจู (เกาหลี)', sysEn: 'Saju', whyTh: 'ใช้เสาสี่หลักชุดเดียวกับ BaZi — โหวตซ้ำจะทำให้จีนมีสองเสียง', whyEn: 'Uses the same four pillars as BaZi — voting twice would give one tradition two voices' },
-    { sysTh: 'ซื่อเว่ยโต่วซู', sysEn: 'Zi Wei Dou Shu', whyTh: 'วิชา 流年 ทั้งหมดยืนอยู่บนตำแหน่ง 命宮 ซึ่งด่านตรวจของเรายังยืนยันกับแหล่งอ้างอิงภายนอกไม่ได้ — ให้โหวตตอนนี้คือเอาเสียงมาวางบนฐานที่ยังพิสูจน์ไม่ผ่าน', whyEn: 'Its entire annual technique stands on the Life Palace position, which our audit cannot yet confirm against an outside source — voting now would rest a voice on an unproven foundation' },
-    { sysTh: 'โหราศาสตร์ทิเบต', sysEn: 'Tibetan', whyTh: 'Mewa ของเราคำนวณจากชุดเดียวกับดาวเก้าดวง — ด่านตรวจยืนยันว่าดาวเดียวกันให้ธาตุเดียวกันเสมอ ให้โหวตด้วยจะเป็นเสียงซ้ำ ไม่ใช่หลักฐานอิสระ', whyEn: 'Our Mewa is derived from the same nine-star cycle — the audit confirms the same star always yields the same element, so a vote here would be an echo, not independent evidence' },
+    { sysTh: 'ซื่อเว่ยโต่วซู', sysEn: 'Zi Wei Dou Shu', whyTh: 'วิชา 流年 ทั้งหมดยืนอยู่บนตำแหน่ง 命宮 ซึ่งด่านตรวจของเรายังยืนยันกับแหล่งอ้างอิงภายนอกไม่ได้ — ให้โหวตตอนนี้คือเอาเสียงมาวางบนฐานที่ยังพิสูจน์ไม่ผ่าน', whyEn: 'Its entire annual technique stands on the Life Palace position, which our audit cannot yet confirm against an outside source — voting now would rest a voice on an unproven foundation', src: '三命通會 วางกฎ 命宮 ว่า “เดือนเดินตามเข็มจาก 寅 · ยามเดินทวนเข็ม” — ตรวจ 15 ก.ย. 69 แล้วสูตรในเอนจินเรา (2 + เดือนจันทรคติ − 1 − ดัชนียามเกิด) ตรงกับกฎนี้ ⇒ เหลือแค่ทานเลขกับเครื่องคำนวณอิสระอีกรอบ แล้วปลดออกจากรายชื่องดออกเสียงได้' },
+    { sysTh: 'โหราศาสตร์ทิเบต', sysEn: 'Tibetan', whyTh: 'Mewa ใช้รอบเลข Lo Shu ชุดเดียวกับดาวเก้าดวง — ปีเดียวกันได้เลขเดียวกัน ทิเบตแค่ผูกสีและธาตุต่างออกไป ให้โหวตด้วยจะนับรอบเลขเดียวกันซ้ำสองครั้ง ไม่ใช่หลักฐานอิสระ', whyEn: 'Mewa runs on the same Lo Shu number cycle as Nine Star Ki — the same year gets the same number, Tibet only assigns it a different colour and element. A vote here would count one number cycle twice, not independent evidence' },
     { sysTh: 'แอซเท็ก', sysEn: 'Aztec', whyTh: 'โทนัลโปวัลลีใช้รอบ 260 วันชุดเดียวกับปฏิทินมายา — ให้โหวตด้วยจะกลายเป็นเมโสอเมริกามีสองเสียง', whyEn: 'Its tonalpohualli is the same 260-day count the Maya calendar already casts — voting too would give one tradition two voices' },
     { sysTh: 'อิฟา (โยรูบา)', sysEn: 'Ifá (Yoruba)', whyTh: 'อิฟาไม่ใช้วันเกิดโดยหลักวิชา — ต้องทอดโอปเปเล ถามทีละคำถาม', whyEn: 'Ifá does not work from a birth date at all — it requires casting, question by question' },
     { sysTh: 'ดรีมไทม์ (อะบอริจิน)', sysEn: 'Aboriginal Dreamtime', whyTh: 'ไม่มีวิชาทำนายรายสัปดาห์จากวันเกิด และเป็นความรู้ที่มีเจ้าของทางวัฒนธรรม', whyEn: 'No week-ahead technique from a birth date, and it is culturally owned knowledge' },
     { sysTh: 'คับบาลาห์', sysEn: 'Kabbalah', whyTh: 'เป็นแผนที่ของจิต ไม่ใช่ปฏิทินทำนาย', whyEn: 'A map of the psyche, not a predictive calendar' },
-    { sysTh: 'รูนนอร์ส', sysEn: 'Norse Runes', whyTh: 'การแบ่งรูนตามครึ่งเดือนเป็นงานสมัยใหม่ (Pennick) ไม่ใช่ตำราเดิม', whyEn: 'The half-month rune calendar is a modern construction (Pennick), not the historical source' },
-    { sysTh: 'ปฏิทินต้นไม้เซลติก', sysEn: 'Celtic Tree', whyTh: 'ปฏิทินต้นไม้เป็นงานของ Robert Graves ปี 1948 ไม่ใช่ประเพณีเซลต์โบราณ จึงไม่มีวิชาเดินเวลาให้ใช้', whyEn: 'The tree calendar is Robert Graves (1948), not ancient Celtic practice — there is no inherited timing technique to use' },
-    { sysTh: 'โอแฮม', sysEn: 'Ogham', whyTh: 'เป็นระบบอักษร ไม่ใช่ปฏิทิน — การผูกอักษรกับช่วงเวลาเป็นงานสมัยใหม่ชุดเดียวกับปฏิทินต้นไม้', whyEn: 'An alphabet, not a calendar — binding letters to dates comes from the same modern revival as the tree calendar' },
+    { sysTh: 'รูนนอร์ส', sysEn: 'Norse Runes', whyTh: 'การแบ่งรูนตามครึ่งเดือนเป็นงานสมัยใหม่ (Pennick) ไม่ใช่ตำราเดิม', whyEn: 'The half-month rune calendar is a modern construction (Pennick), not the historical source', src: 'Nigel Pennick, Runic Astrology / Runes and Astrology — ปฏิทินรูนถูกจัดระบบในศตวรรษที่ 20 และลำดับของ Pennick ต่างจาก Elder Futhark มาตรฐาน ซึ่งเป็นร่องรอยว่าเป็นการจัดใหม่ · ยุคไวกิงไม่มีจักรราศีหรือดวงชะตา' },
+    { sysTh: 'ปฏิทินต้นไม้เซลติก', sysEn: 'Celtic Tree', whyTh: 'ปฏิทินต้นไม้เป็นงานของ Robert Graves ปี 1948 ไม่ใช่ประเพณีเซลต์โบราณ จึงไม่มีวิชาเดินเวลาให้ใช้', whyEn: 'The tree calendar is Robert Graves (1948), not ancient Celtic practice — there is no inherited timing technique to use', src: 'Robert Graves, The White Goddess (1948) — ตัดอักษรโอแฮมจาก 20 เหลือ 13 ให้ลงกับเดือนจันทรคติ · Charles Graves (ปู่ของเขาเอง ประธาน Royal Irish Academy) ชี้ว่า tree alphabet เป็นของปลอม และ MacAlister กับนักวิชาการเซลต์รุ่นนั้นเห็นตรงกัน' },
+    { sysTh: 'โอแฮม', sysEn: 'Ogham', whyTh: 'เป็นระบบอักษร ไม่ใช่ปฏิทิน — การผูกอักษรกับช่วงเวลาเป็นงานสมัยใหม่ชุดเดียวกับปฏิทินต้นไม้', whyEn: 'An alphabet, not a calendar — binding letters to dates comes from the same modern revival as the tree calendar', src: 'ฐานเดียวกับปฏิทินต้นไม้ — การผูกอักษรโอแฮมกับช่วงเวลาที่ใช้กันทุกวันนี้มาจาก The White Goddess ซึ่งวงวิชาการเซลต์ปฏิเสธแล้ว' },
     { sysTh: 'โทเท็มพื้นเมืองอเมริกัน', sysEn: 'Native American Totem', whyTh: 'ตารางโทเท็มตามเดือนเกิดเป็นงานสมัยใหม่', whyEn: 'The birth-month totem table is a modern invention' },
-    { sysTh: 'Arabic Parts', sysEn: 'Arabic Parts', whyTh: 'เป็นจุดคำนวณในดวงกำเนิด ไม่ใช่วิชาเดินเวลา', whyEn: 'Computed points in the natal chart, not a timing technique' },
+    { sysTh: 'Arabic Parts', sysEn: 'Arabic Parts', whyTh: 'เป็นจุดคำนวณในดวงกำเนิด ไม่ใช่วิชาเดินเวลา', whyEn: 'Computed points in the natal chart, not a timing technique', src: 'Vettius Valens, Anthology เล่ม 4 — Zodiacal Releasing ปล่อยช่วงเวลาออกจาก Lot of Fortune / Lot of Spirit โดยตรง ⇒ Lots **มี**วิชาเดินเวลาที่มีตำรารองรับ ไม่ใช่จุดนิ่งในดวงกำเนิดอย่างที่เคยสรุปไว้ที่นี่ ⇒ สร้างได้ ไม่ใช่แต่ง' },
     { sysTh: 'เลข ๗ ตัว ๙ ฐาน', sysEn: 'Thai 7-Number', whyTh: 'ฐานทั้งเก้าอ่านจากวันเกิดเป็นภาพนิ่ง · ชั้นดาวจรตามอายุมีสอนกันหลายสำนักและเราไม่มีตำราที่ยืนยันได้ว่าใช้สูตรไหน — เดาแล้วใส่ลงไปคือแต่ง จึงยังไม่ต่อสาย', whyEn: 'Its nine bases read the birth date as a fixed picture. The age-progression layer is taught differently by different schools and we have no source that settles which rule is correct — guessing one would be inventing, so it stays unwired' },
 ];
 // Traditional (pre-modern) rulers, used only to name the profection time-lord.
@@ -7540,10 +7635,15 @@ function _buildSynthesis(signals, tier, lang, c) {
     const isTh = lang === 'th';
     if (!signals.length)
         return isTh ? 'วันนี้ไม่มีศาสตร์ไหนออกเสียงเลย' : 'No tradition speaks today.';
-    const up = signals.filter(s => s.score > 0);
-    const down = signals.filter(s => s.score < 0);
-    const flat = signals.filter(s => s.score === 0);
-    const loudest = signals.slice().sort((a, b) => Math.abs(b.score) - Math.abs(a.score))[0];
+    // ⛔ ต้องกรอง counted===false ออกก่อนนับ — ไม่งั้นเสียงสมทบ (ซาจู/แอซเท็ก/ทักษา)
+    //    กับบริบท (ไบโอริทึม/มหาทศา) ซึ่งคะแนน 0 จะถูกนับเป็น "เฉย" ทั้งที่มันไม่ได้โหวต
+    const voices = signals.filter(s => s.counted !== false);
+    const up = voices.filter(s => s.score > 0);
+    const down = voices.filter(s => s.score < 0);
+    const flat = voices.filter(s => s.score === 0);
+    // ดังที่สุด = แรงที่สุด**หลังคูณน้ำหนัก** ไม่ใช่คะแนนดิบ ไม่งั้นบรรทัดนี้จะยกเสียงที่
+    // ถ่วงผลรวมน้อยกว่าขึ้นมาเป็นตัวแทนของวัน
+    const loudest = voices.slice().sort((a, b) => Math.abs(b.score * (b.weight ?? 1)) - Math.abs(a.score * (a.weight ?? 1)))[0];
     // 1 · วันนี้เป็นวันแบบไหน
     const verdict = isTh
         ? (tier.key === 'peak' ? 'วันนี้เสียงส่วนใหญ่หนุนคุณพร้อมกัน ซึ่งไม่ได้เกิดบ่อย'
@@ -7572,17 +7672,37 @@ function _buildSynthesis(signals, tier, lang, c) {
     // เดิมผูกกับ tier ของ calcDailyPulse ⇒ หัวข้อขึ้น "วันทอง" (นับจาก calcForecast)
     // แล้วบรรทัดนี้แนะนำแบบวันกลาง ๆ อยู่ใต้กันเอง · ตอนนี้ประโยคนี้พูดถึงเฉพาะเสียงที่มัน
     // เพิ่งยกมา จึงไม่ไปแย่งประกาศคำตัดสินของวันกับใคร
+    // 🔴 แก้ 15 ก.ย. 69 — เดิมประโยคนี้ดูแค่ทิศของเสียงที่ดังที่สุด จึงขัดกับคำตัดสินของวัน
+    //    ที่หัวข้อประกาศอยู่ข้าง ๆ ได้ (เจอจริงวันนี้: หัวบอก "สังเกต 🟠 −2"
+    //    บรรทัดนี้บอก "ใช้จังหวะที่เสียงนี้เปิดให้ อย่าปล่อยผ่าน" บนจอเดียวกัน)
+    //
+    // ⛔ ทางแก้ไม่ใช่ตัดชื่อเสียงที่ดังที่สุดทิ้ง — เสียงค้านคือของที่เราขาย
+    //    ⇒ เมื่อเสียงดังสุดสวนทางกับผลรวม ให้**พูดออกมาตรง ๆ ว่าสวนกัน** แล้วสรุปตามผลรวม
+    //    คำตัดสินของวันมาจาก tier ตัวเดียวกับที่หัวข้อใช้ จึงขัดกันไม่ได้อีก
+    const dayLean = (tier.key === 'peak' || tier.key === 'supportive') ? 1
+        : (tier.key === 'observe' || tier.key === 'rest') ? -1 : 0;
+    const loudLean = !loudest || loudest.score === 0 ? 0 : (loudest.score > 0 ? 1 : -1);
+    const agrees = loudLean !== 0 && dayLean !== 0 && loudLean === dayLean;
+    const clashes = loudLean !== 0 && dayLean !== 0 && loudLean !== dayLean;
     const act = isTh
-        ? (!loudest || loudest.score === 0
-            ? 'ไม่มีเสียงไหนดังพอจะสั่งคุณวันนี้ — ตัดสินใจด้วยข้อมูลของคุณเอง ไม่ต้องรอฤกษ์'
-            : loudest.score > 0
-                ? 'ใช้จังหวะที่เสียงนี้เปิดให้ อย่าปล่อยผ่าน'
-                : 'ด้านที่เสียงนี้พูดถึง อย่าเพิ่งผูกมัดอะไรที่ถอยกลับไม่ได้')
-        : (!loudest || loudest.score === 0
-            ? 'No voice is loud enough to overrule you today — decide on your own information.'
-            : loudest.score > 0
-                ? 'Use the opening this voice is giving you.'
-                : 'On what this voice is pointing at, do not commit to anything you cannot walk back.');
+        ? (agrees
+            ? (dayLean > 0
+                ? 'และเสียงที่เหลือหนุนไปทางเดียวกัน ⇒ ใช้จังหวะนี้ อย่าปล่อยผ่าน'
+                : 'และเสียงที่เหลือเตือนไปทางเดียวกัน ⇒ วันนี้อย่าเพิ่งผูกมัดอะไรที่ถอยกลับไม่ได้')
+            : clashes
+                ? (dayLean > 0
+                    ? 'แต่พอรวมทุกเสียงแล้ววันนี้ยังเอียงไปทางหนุน ⇒ ระวังเฉพาะจุดที่เสียงนี้ชี้ ที่เหลือเดินได้'
+                    : 'แต่พอรวมทุกเสียงแล้ววันนี้เอียงไปทางเตือน ⇒ ใช้ช่องที่เสียงนี้เปิดได้ แต่อย่าขยายเกินตัว')
+                : 'และเสียงที่เหลือหักล้างกันเอง ⇒ ตัดสินใจด้วยข้อมูลของคุณเอง ไม่ต้องรอฤกษ์')
+        : (agrees
+            ? (dayLean > 0
+                ? 'and the rest lean the same way — use the opening, do not let it pass.'
+                : 'and the rest warn the same way — do not commit to anything you cannot walk back today.')
+            : clashes
+                ? (dayLean > 0
+                    ? 'but taken together the day still leans in your favour — mind only what this voice points at.'
+                    : 'but taken together the day leans toward caution — you may use this opening, just do not overextend.')
+                : 'and the rest cancel each other out — decide on your own information.');
     // ⛔ ไม่คืนคำตัดสินและไม่นับเสียงซ้ำอีกแล้ว
     //
     // หัวข้อของหน้า (_pulseBar) ประกาศคำตัดสินกับจำนวนศาสตร์ที่ออกเสียงไปแล้ว และมันนับ
@@ -7593,7 +7713,7 @@ function _buildSynthesis(signals, tier, lang, c) {
     // เสียงไหนดังที่สุดวันนี้ และให้ทำอะไร
     void verdict;
     void tally;
-    return `${who}${isTh ? ' ⇒ ' : '. '}${act}`;
+    return `${who} ${act}`; // 15 ก.ย. — act ขึ้นต้นด้วย "และ/แต่" ต่อประโยคเดิม (กู้กลับจาก bundle)
 }
 // Module-scoped language marker set by generateReport() at the top of each
 // report render. Read by buildRichReading() and other helpers so section
@@ -7894,14 +8014,24 @@ function _hellenisticDeepSections(a) {
     return _dsSort(sec, ['📜', '🧬', '💼', '💰', '❤️', '🩺', '📅', '🎨', '💬']);
 }
 function calcTibetan(d) {
-    const MEWA_NAMES = ['', 'น้ำขาว', 'ดินดำ', 'ไม้เขียว', 'ไม้เขียว', 'ดินเหลือง', 'โลหะขาว', 'โลหะแดง', 'ดินขาว', 'ไฟม่วง'];
-    const MEWA_NAMES_EN = ['', 'White Water', 'Black Earth', 'Green Wood', 'Green Wood', 'Yellow Earth', 'White Metal', 'Red Metal', 'White Earth', 'Purple Fire'];
-    const MEWA_EL = ['', 'น้ำ', 'ดิน', 'ไม้', 'ไม้', 'ดิน', 'โลหะ', 'โลหะ', 'ดิน', 'ไฟ'];
+    // 25 ก.ย. 69 — ชื่อ/ธาตุ Mewa ตามตำราทิเบต (tibastro.be · dailybhutan.com · tibetanaltar ตรงกัน 3 แหล่ง)
+    //   เดิมยกชุดของดาวเก้าดวงญี่ปุ่นมา (น้ำขาว/ดินดำ/ไม้เขียว×2/.../ไฟม่วง) ผิด 6 ใน 9 ช่อง · เลขยังเป็นรอบ Lo Shu เดียวกัน
+    const MEWA_NAMES = ['', 'โลหะขาว', 'น้ำดำ', 'น้ำสีน้ำเงิน', 'ไม้เขียว', 'ดินเหลือง', 'โลหะขาว', 'ไฟแดง', 'โลหะขาว', 'ไฟแดงเข้ม'];
+    const MEWA_NAMES_EN = ['', 'White Metal', 'Black Water', 'Blue Water', 'Green Wood', 'Yellow Earth', 'White Metal', 'Red Fire', 'White Metal', 'Maroon Fire'];
+    const MEWA_EL = ['', 'โลหะ', 'น้ำ', 'น้ำ', 'ไม้', 'ดิน', 'โลหะ', 'ไฟ', 'โลหะ', 'ไฟ'];
     const MEWA_QUALITY = ['', 'สมดุล', 'ท้าทาย', 'เติบโต', 'เสริม', 'ท้าทายมาก', 'มั่นคง', 'กล้าหาญ', 'เข้มแข็ง', 'รุ่งเรือง'];
     const MEWA_QUALITY_EN = ['', 'Balanced', 'Challenging', 'Growth', 'Supportive', 'Highly challenging', 'Stable', 'Courageous', 'Strong', 'Flourishing'];
     const MEWA_QUALITY_SCORE = [0, 700, 580, 730, 720, 560, 750, 720, 760, 800];
     // Mewa: birth year mewa (counting backwards from 9)
-    const adjYear = (d.month < 2 || (d.month === 2 && d.day < 4)) ? d.year - 1 : d.year;
+    // 24 ก.ย. 69 — ปีทิเบตเปลี่ยนที่ Losar (ปีใหม่จันทรคติทิเบต) ไม่ใช่ 4 ก.พ. (立春 = ปฏิทินสุริยคติของจีน)
+    //   ของเดิมตัดปีที่ 4 ก.พ. ⇒ คนเกิดระหว่าง 4 ก.พ. ถึงตรุษจีนได้ Mewa/Parkha ของปีถัดไปผิดทุกคน
+    //   Losar ตรงกับตรุษจีน (±1 วัน) หรือช้ากว่าหนึ่งเดือนจันทรคติ — ไม่เคยเร็วกว่า
+    //   ⇒ ก่อนตรุษจีน = ปีเก่าแน่นอน · เดือนจันทรคติที่ 2 ขึ้นไป = ปีใหม่แน่นอน
+    //   ⇒ เกิดในเดือนจันทรคติที่ 1 = ยังบอกไม่ได้โดยไม่มีปฏิทิน Phugpa ⇒ `yearUncertain` แล้วงดโหวตในชั้น traits
+    //      (หลัก consensus ของเว็บ: ไม่แน่ใจ = ไม่ออกเสียง · หน้าอ่านยังแสดงค่าตามตรุษจีนพร้อมบอกว่าไม่แน่ชัด)
+    const _tbLun = _lunarDate(toJD(d.year, d.month, d.day, d.hour - d.timezone + d.minute / 60));
+    const adjYear = (d.month <= 2 && _tbLun.month >= 11) ? d.year - 1 : d.year;
+    const yearUncertain = _tbLun.month === 1 && !_tbLun.leap;
     const mewa = ((9 - ((adjYear - 1) % 9)) % 9) + 1; // Tibetan counts opposite to 9 Star Ki
     // Parkha: 8 trigrams cycled by year
     const PARKHA = ['Khen', 'Zin', 'Kham', 'Zon', 'Khy', 'Dha', 'Gin', 'Li'];
@@ -7915,10 +8045,14 @@ function calcTibetan(d) {
     // apart could land in the bottom tier and the top tier off nothing but the
     // calendar. A system's score is now exactly what its own reading is worth.
     const score = Math.max(420, Math.min(950, baseScore));
+    // 24 ก.ย. 69 — บอกผู้อ่านตรง ๆ เมื่อปีทิเบตไม่แน่ชัด (ต้องคู่กับการงดเสียงในชั้น traits)
+    const _tbNoteTh = yearUncertain ? ' <em>· หมายเหตุ: คุณเกิดในเดือนแรกของปีจันทรคติ บางปีปีใหม่ทิเบต (Losar) มาช้ากว่าตรุษจีนหนึ่งเดือน ค่าข้างบนคิดตามตรุษจีน ถ้า Losar ปีนั้นมาช้า Mewa/Parkha ของคุณจะเป็นของปีก่อนหน้า — เราจึงไม่นับเสียงทิเบตตอนเทียบศาสตร์ของคุณ</em>' : '';
+    const _tbNoteEn = yearUncertain ? ' <em>· Note: you were born in the first lunar month. In some years Losar (Tibetan New Year) falls a month after Chinese New Year; the values above follow Chinese New Year, and if Losar came late that year your Mewa/Parkha belong to the previous year — so the Tibetan voice is left out when we compare traditions for you.</em>' : '';
     const tibetanResult = {
         mewa, mewaName: `Mewa ${mewa} — ${tPick(MEWA_NAMES[mewa], MEWA_NAMES_EN[mewa])}`, mewaElement: pEl(MEWA_EL[mewa]),
         mewaQuality: tPick(MEWA_QUALITY[mewa], MEWA_QUALITY_EN[mewa]),
         parkha: PARKHA[parkhaIdx], parkhaElement: pEl(PARKHA_EL[parkhaIdx]), parkhaName: tPick(PARKHA_NAMES[parkhaIdx], PARKHA_NAMES_EN[parkhaIdx]),
+        yearUncertain,
         score,
         reading: buildRichReading({
             sysTh: 'โหราศาสตร์ทิเบต (Mewa & Parkha)',
@@ -7933,15 +8067,15 @@ function calcTibetan(d) {
             originEn: 'Tibetan astrology fuses three streams of wisdom — Buddhist astrology from India, ancient Chinese astronomy, and the indigenous Bön system of Tibet. Its core is Mewa (a 9-square magic grid) and Parkha (the 8 trigrams). Lamas still consult both before performing important ceremonies today.',
             yearsOld: 1300,
             keyValue: `Mewa ${mewa} (${MEWA_NAMES[mewa]}) · Parkha ${PARKHA_NAMES[parkhaIdx]}`,
-            keyValueEn: `Mewa ${mewa} (${MEWA_NAMES[mewa]}) · Parkha ${PARKHA[parkhaIdx]}`,
-            keyValueMeaning: `Mewa ${mewa} คือจัตุรัสเวทมนตร์ที่คุณเกิดในรอบของมัน — ธาตุหลักคือ <strong>${MEWA_EL[mewa]}</strong> และคุณภาพพลังงานปีเป็น <strong>${MEWA_QUALITY[mewa]}</strong> Parkha ของคุณคือ ${PARKHA_NAMES[parkhaIdx]} ซึ่งเพิ่มชั้นที่สองของความหมาย — ปรัชญาทิเบตเชื่อว่า Mewa บอก "ดินที่คุณปลูก" ในขณะที่ Parkha บอก "ลมที่พัดผ่านคุณ"`,
-            keyValueMeaningEn: `Mewa ${mewa} is the magic-grid square you were born into. Your primary element is <strong>${tEl(MEWA_EL[mewa])}</strong>; the year-energy quality is <strong>${MEWA_QUALITY[mewa] === 'สมดุล' ? 'balance' : MEWA_QUALITY[mewa] === 'ท้าทาย' ? 'challenge' : MEWA_QUALITY[mewa] === 'เติบโต' ? 'growth' : MEWA_QUALITY[mewa] === 'เสริม' ? 'support' : MEWA_QUALITY[mewa] === 'ท้าทายมาก' ? 'high challenge' : MEWA_QUALITY[mewa] === 'มั่นคง' ? 'stability' : MEWA_QUALITY[mewa] === 'กล้าหาญ' ? 'courage' : MEWA_QUALITY[mewa] === 'เข้มแข็ง' ? 'strength' : 'flourishing'}</strong>. Your Parkha is ${PARKHA[parkhaIdx]} (${PARKHA_NAMES[parkhaIdx].split('(')[1]?.replace(')', '') || ''}), adding a second layer of meaning. Tibetan philosophy says Mewa tells you the "soil you grow in" while Parkha tells you the "wind that blows through you".`,
-            uniqueTh: `เลข Mewa ${mewa} ของคุณคือดาวดวงเดียวกับดาว ${mewa} ใน Nine Star Ki — ทั้งสองมาจากตาราง Lo Shu อันเดียวกัน ⇒ <strong>หน้าทิเบตกับหน้า Nine Star Ki จะให้ธาตุตรงกันเสมอ ไม่ใช่การยืนยันซึ่งกันและกัน</strong> · สิ่งที่ทิเบตมีเพิ่มจริงคือ <strong>Parkha</strong> (${PARKHA_NAMES[parkhaIdx]}) ซึ่งมาจากตรีสัญลักษณ์ปากัวคนละชุดกับ Mewa และไม่มีในระบบญี่ปุ่น — Parkha อ่าน 'ทิศที่พลังคุณไหลออก' ส่วน Mewa อ่าน 'พลังที่คุณเกิดมาพร้อม'`,
-            uniqueEn: `Your Mewa ${mewa} is the same star as Nine Star Ki's star ${mewa} — both come off one Lo Shu square. <strong>The Tibetan page and the Nine Star Ki page will always give the same element; that is not two traditions confirming each other.</strong> What Tibet genuinely adds is the <strong>Parkha</strong> (${PARKHA_NAMES[parkhaIdx]}), drawn from the Ba Gua trigrams rather than the Mewa numbers and absent from the Japanese system: Parkha reads the direction your energy flows outward, where Mewa reads the energy you were born holding.`,
-            strengthTh: `ด้วย Mewa ${mewa} ${MEWA_NAMES[mewa]} ${mewa === 9 ? 'คุณเป็น "ผู้ส่องสว่าง" ในสายทิเบต — มีพลังไฟและความเจริญรุ่งเรือง คนแบบ Mewa 9 มักเป็นผู้นำทางจิตวิญญาณ หรือศิลปินที่สร้างแรงบันดาลใจให้ผู้อื่นโดยธรรมชาติ' : mewa === 1 ? 'คุณเป็น "น้ำขาว" ที่ไหลลึกและสะท้อนแสง — มีปัญญาเข้าถึงข้อมูลที่ใช้เหตุผลอย่างเดียวอ่านไม่ได้' : mewa === 6 ? 'คุณเป็น "โลหะขาว" ในสายทิเบต — แข็งแกร่ง มีหลักการ เหมาะเป็นผู้พิพากษาหรือที่ปรึกษาอาวุโส' : mewa === 8 ? 'คุณเป็น "ดินขาว" ที่มั่นคงที่สุดใน 9 Mewa — คนแบบนี้สร้างฐานให้ครอบครัวและชุมชนไปหลายรุ่น' : 'คุณมีพลังธาตุ' + MEWA_EL[mewa] + 'เป็นฐานที่แข็งแรง — คนในทิเบตเชื่อว่ายิ่งคุณใช้ชีวิตสอดคล้องกับธาตุหลักของ Mewa ตัวเอง ชีวิตยิ่งราบรื่น'} ผสานกับ Parkha ${PARKHA_NAMES[parkhaIdx]} ทำให้คุณมีพรสวรรค์ด้าน${PARKHA_EL[parkhaIdx] === 'ไฟ' ? 'การจุดประกายและการแสดงออก' : PARKHA_EL[parkhaIdx] === 'น้ำ' ? 'การปรับตัวและการอ่านคน' : PARKHA_EL[parkhaIdx] === 'ไม้' ? 'การเติบโตอย่างมั่นคง' : PARKHA_EL[parkhaIdx] === 'ดิน' ? 'การบ่มเพาะและความอดทน' : 'การตัดสินใจเฉียบขาด'}`,
-            strengthEn: `With Mewa ${mewa} ${MEWA_NAMES[mewa]}, ${mewa === 9 ? 'you are an "illuminator" in the Tibetan tradition — fire energy and flourishing. Mewa 9 people often become spiritual leaders or artists who naturally inspire others' : mewa === 1 ? 'you are "White Water" — flowing deep and reflecting light. You have wisdom that reaches information pure reason can\'t access' : mewa === 6 ? 'you are "White Metal" in the Tibetan line — strong, principled, suited to judging or senior advisory roles' : mewa === 8 ? 'you are "White Earth" — the most stable of the 9 Mewa. People like you build foundations that serve family and community across generations' : 'you carry strong ' + (tEl(MEWA_EL[mewa])) + ' element energy. Tibetans believe the more your life aligns with your Mewa\'s element, the smoother life flows'}. Combined with Parkha ${PARKHA[parkhaIdx]}, you carry a gift for ${PARKHA_EL[parkhaIdx] === 'ไฟ' ? 'igniting and self-expression' : PARKHA_EL[parkhaIdx] === 'น้ำ' ? 'adapting and reading people' : PARKHA_EL[parkhaIdx] === 'ไม้' ? 'steady growth' : PARKHA_EL[parkhaIdx] === 'ดิน' ? 'cultivation and patience' : 'sharp decision-making'}.`,
-            shadowTh: `ด้านมืดของ Mewa ${mewa} คือ${mewa === 5 ? '"ดินเหลือง" ซึ่งเป็นตำแหน่งกลางของ Lo Shu — พลังสูงสุดแต่ผันผวนที่สุด ต้องระวังอุบัติเหตุใหญ่และการตัดสินใจใต้อารมณ์ โหรทิเบตแนะนำให้บูชา Mañjuśrī ในปีที่รู้สึกผันผวน' : mewa === 2 ? '"ดินดำ" ซึ่งมีพลังท้าทายสูง — อาจเจอความสูญเสียที่เตรียมใจไม่ทัน โหรทิเบตแนะนำให้สวด Om Mani Padme Hum 108 จบเป็นประจำ' : 'การใช้พลังงานของ Mewa นี้ในทิศทางลบ — เมื่อธาตุ' + MEWA_EL[mewa] + 'แรงเกินไปโดยไม่มีธาตุเสริม จะกลายเป็นความเฉื่อยชา (ถ้าเป็นดิน) ความร้อนรุ่ม (ถ้าเป็นไฟ) ความโลเล (ถ้าเป็นน้ำ) ความแข็งกระด้าง (ถ้าเป็นโลหะ) หรือความหัวดื้อ (ถ้าเป็นไม้)'}`,
-            shadowEn: `The shadow of Mewa ${mewa} is ${mewa === 5 ? '"Yellow Earth" — the centre of the Lo Shu grid. Highest power, but the most volatile. Watch for major accidents and emotional decisions. Tibetan astrologers prescribe devotion to Mañjuśrī in volatile years' : mewa === 2 ? '"Black Earth" — high challenge energy. You may face unexpected loss. Lamas prescribe chanting Om Mani Padme Hum 108 times daily' : 'using this Mewa\'s energy in the wrong direction — when the ' + (tEl(MEWA_EL[mewa])) + ' element runs unchecked, it becomes inertia (Earth), inflammation (Fire), wavering (Water), rigidity (Metal), or stubbornness (Wood)'}.`,
+            keyValueEn: `Mewa ${mewa} (${MEWA_NAMES_EN[mewa]}) · Parkha ${PARKHA[parkhaIdx]}`,
+            keyValueMeaning: `Mewa ${mewa} คือจัตุรัสเวทมนตร์ที่คุณเกิดในรอบของมัน — ธาตุหลักคือ <strong>${MEWA_EL[mewa]}</strong> และคุณภาพพลังงานปีเป็น <strong>${MEWA_QUALITY[mewa]}</strong> Parkha ของคุณคือ ${PARKHA_NAMES[parkhaIdx]} ซึ่งเพิ่มชั้นที่สองของความหมาย — ปรัชญาทิเบตเชื่อว่า Mewa บอก "ดินที่คุณปลูก" ในขณะที่ Parkha บอก "ลมที่พัดผ่านคุณ"${_tbNoteTh}`,
+            keyValueMeaningEn: `Mewa ${mewa} is the magic-grid square you were born into. Your primary element is <strong>${tEl(MEWA_EL[mewa])}</strong>; the year-energy quality is <strong>${MEWA_QUALITY[mewa] === 'สมดุล' ? 'balance' : MEWA_QUALITY[mewa] === 'ท้าทาย' ? 'challenge' : MEWA_QUALITY[mewa] === 'เติบโต' ? 'growth' : MEWA_QUALITY[mewa] === 'เสริม' ? 'support' : MEWA_QUALITY[mewa] === 'ท้าทายมาก' ? 'high challenge' : MEWA_QUALITY[mewa] === 'มั่นคง' ? 'stability' : MEWA_QUALITY[mewa] === 'กล้าหาญ' ? 'courage' : MEWA_QUALITY[mewa] === 'เข้มแข็ง' ? 'strength' : 'flourishing'}</strong>. Your Parkha is ${PARKHA[parkhaIdx]} (${PARKHA_NAMES[parkhaIdx].split('(')[1]?.replace(')', '') || ''}), adding a second layer of meaning. Tibetan philosophy says Mewa tells you the "soil you grow in" while Parkha tells you the "wind that blows through you".${_tbNoteEn}`,
+            uniqueTh: `เลข Mewa ${mewa} ของคุณคือดาวดวงเดียวกับดาว ${mewa} ใน Nine Star Ki — ทั้งสองมาจากตาราง Lo Shu อันเดียวกัน แต่ทิเบตผูกสีและธาตุกับเลขคนละแบบกับญี่ปุ่น ⇒ <strong>เลขที่ตรงกันไม่ใช่การยืนยันซึ่งกันและกัน</strong> (ธาตุต่างกันได้ เพราะแต่ละสายตีความเลขเดียวกันต่างกัน) · สิ่งที่ทิเบตมีเพิ่มจริงคือ <strong>Parkha</strong> (${PARKHA_NAMES[parkhaIdx]}) ซึ่งมาจากตรีสัญลักษณ์ปากัวคนละชุดกับ Mewa และไม่มีในระบบญี่ปุ่น — Parkha อ่าน 'ทิศที่พลังคุณไหลออก' ส่วน Mewa อ่าน 'พลังที่คุณเกิดมาพร้อม'`,
+            uniqueEn: `Your Mewa ${mewa} is the same star as Nine Star Ki's star ${mewa} — both come off one Lo Shu square, though Tibet gives each number its own colour and element. <strong>A matching number is not two traditions confirming each other.</strong> What Tibet genuinely adds is the <strong>Parkha</strong> (${PARKHA_NAMES[parkhaIdx]}), drawn from the Ba Gua trigrams rather than the Mewa numbers and absent from the Japanese system: Parkha reads the direction your energy flows outward, where Mewa reads the energy you were born holding.`,
+            strengthTh: `ด้วย Mewa ${mewa} ${MEWA_NAMES[mewa]} ${mewa === 9 ? 'คุณเป็น "ผู้ส่องสว่าง" ในสายทิเบต — มีพลังไฟและความเจริญรุ่งเรือง คนแบบ Mewa 9 มักเป็นผู้นำทางจิตวิญญาณ หรือศิลปินที่สร้างแรงบันดาลใจให้ผู้อื่นโดยธรรมชาติ' : mewa === 1 ? 'คุณเป็น Mewa 1 "ขาว" ธาตุโลหะ — ตำราทิเบตเรียกว่า "กระจกแห่งโอสถ" (Mirror of Medicine)' : mewa === 6 ? 'คุณเป็น "โลหะขาว" ในสายทิเบต — แข็งแกร่ง มีหลักการ เหมาะเป็นผู้พิพากษาหรือที่ปรึกษาอาวุโส' : mewa === 8 ? 'คุณเป็น "ดินขาว" ที่มั่นคงที่สุดใน 9 Mewa — คนแบบนี้สร้างฐานให้ครอบครัวและชุมชนไปหลายรุ่น' : 'คุณมีพลังธาตุ' + MEWA_EL[mewa] + 'เป็นฐานที่แข็งแรง — คนในทิเบตเชื่อว่ายิ่งคุณใช้ชีวิตสอดคล้องกับธาตุหลักของ Mewa ตัวเอง ชีวิตยิ่งราบรื่น'} ผสานกับ Parkha ${PARKHA_NAMES[parkhaIdx]} ทำให้คุณมีพรสวรรค์ด้าน${PARKHA_EL[parkhaIdx] === 'ไฟ' ? 'การจุดประกายและการแสดงออก' : PARKHA_EL[parkhaIdx] === 'น้ำ' ? 'การปรับตัวและการอ่านคน' : PARKHA_EL[parkhaIdx] === 'ไม้' ? 'การเติบโตอย่างมั่นคง' : PARKHA_EL[parkhaIdx] === 'ดิน' ? 'การบ่มเพาะและความอดทน' : 'การตัดสินใจเฉียบขาด'}`,
+            strengthEn: `With Mewa ${mewa} ${MEWA_NAMES_EN[mewa]}, ${mewa === 9 ? 'you are an "illuminator" in the Tibetan tradition — fire energy and flourishing. Mewa 9 people often become spiritual leaders or artists who naturally inspire others' : mewa === 1 ? 'you are Mewa 1, "White" of the Metal element — the Tibetan texts call it the "Mirror of Medicine"' : mewa === 6 ? 'you are "White Metal" in the Tibetan line — strong, principled, suited to judging or senior advisory roles' : mewa === 8 ? 'you are Mewa 8, "White" of the Metal element — one of the three white Mewa (1, 6, 8) in the Tibetan grid' : 'you carry strong ' + (tEl(MEWA_EL[mewa])) + ' element energy. Tibetans believe the more your life aligns with your Mewa\'s element, the smoother life flows'}. Combined with Parkha ${PARKHA[parkhaIdx]}, you carry a gift for ${PARKHA_EL[parkhaIdx] === 'ไฟ' ? 'igniting and self-expression' : PARKHA_EL[parkhaIdx] === 'น้ำ' ? 'adapting and reading people' : PARKHA_EL[parkhaIdx] === 'ไม้' ? 'steady growth' : PARKHA_EL[parkhaIdx] === 'ดิน' ? 'cultivation and patience' : 'sharp decision-making'}.`,
+            shadowTh: `ด้านมืดของ Mewa ${mewa} คือ${mewa === 5 ? '"ดินเหลือง" ซึ่งเป็นตำแหน่งกลางของ Lo Shu — พลังสูงสุดแต่ผันผวนที่สุด ต้องระวังอุบัติเหตุใหญ่และการตัดสินใจใต้อารมณ์ โหรทิเบตแนะนำให้บูชา Mañjuśrī ในปีที่รู้สึกผันผวน' : mewa === 2 ? '"ดำ" ธาตุน้ำ (ตำราเรียกว่า "กระจกแห่งมาร") ซึ่งมีพลังท้าทายสูง — อาจเจอความสูญเสียที่เตรียมใจไม่ทัน โหรทิเบตแนะนำให้สวด Om Mani Padme Hum 108 จบเป็นประจำ' : 'การใช้พลังงานของ Mewa นี้ในทิศทางลบ — เมื่อธาตุ' + MEWA_EL[mewa] + 'แรงเกินไปโดยไม่มีธาตุเสริม จะกลายเป็นความเฉื่อยชา (ถ้าเป็นดิน) ความร้อนรุ่ม (ถ้าเป็นไฟ) ความโลเล (ถ้าเป็นน้ำ) ความแข็งกระด้าง (ถ้าเป็นโลหะ) หรือความหัวดื้อ (ถ้าเป็นไม้)'}`,
+            shadowEn: `The shadow of Mewa ${mewa} is ${mewa === 5 ? '"Yellow Earth" — the centre of the Lo Shu grid. Highest power, but the most volatile. Watch for major accidents and emotional decisions. Tibetan astrologers prescribe devotion to Mañjuśrī in volatile years' : mewa === 2 ? '"Black" of the Water element (the texts call it the "Mirror of Demons") — high challenge energy. You may face unexpected loss. Lamas prescribe chanting Om Mani Padme Hum 108 times daily' : 'using this Mewa\'s energy in the wrong direction — when the ' + (tEl(MEWA_EL[mewa])) + ' element runs unchecked, it becomes inertia (Earth), inflammation (Fire), wavering (Water), rigidity (Metal), or stubbornness (Wood)'}.`,
             practiceTh: `การปฏิบัติที่พระลามะใช้จริง: (1) ตื่นเช้าสวด <em>Om Mani Padme Hum</em> 108 จบ เพื่อเปิด Parkha (2) ใน${mewa === 9 ? 'วันพุธและวันอาทิตย์' : mewa === 1 ? 'วันจันทร์และวันพุธ' : mewa === 6 || mewa === 7 ? 'วันศุกร์และวันเสาร์' : 'วันพฤหัสและวันเสาร์'} เป็นวันที่ ${MEWA_EL[mewa]}ของคุณแรงที่สุด ใช้วันเหล่านี้ตัดสินใจเรื่องสำคัญ (3) พกหินหรือสีที่ตรงกับธาตุ${MEWA_EL[mewa]}ไว้ใกล้ตัว — ${MEWA_EL[mewa] === 'ไฟ' ? 'ทับทิม โกเมน สีแดงม่วง' : MEWA_EL[mewa] === 'น้ำ' ? 'แอคความารีน มูนสโตน สีน้ำเงินเข้ม' : MEWA_EL[mewa] === 'ไม้' ? 'มรกต หยก สีเขียวสด' : MEWA_EL[mewa] === 'โลหะ' ? 'ควอตซ์ใส มุก สีขาวเงิน' : 'ซิทริน อำพัน สีเหลืองทอง'}`,
             practiceEn: `Practices lamas actually use: (1) Wake and chant <em>Om Mani Padme Hum</em> 108 times to open the Parkha. (2) On ${mewa === 9 ? 'Wednesdays and Sundays' : mewa === 1 ? 'Mondays and Wednesdays' : mewa === 6 || mewa === 7 ? 'Fridays and Saturdays' : 'Thursdays and Saturdays'} your ${tEl(MEWA_EL[mewa])} energy is strongest — make important decisions on these days. (3) Carry stones or wear colours matched to your element — ${MEWA_EL[mewa] === 'ไฟ' ? 'Ruby, Garnet, deep red-violet' : MEWA_EL[mewa] === 'น้ำ' ? 'Aquamarine, Moonstone, deep blue' : MEWA_EL[mewa] === 'ไม้' ? 'Emerald, Jade, vivid green' : MEWA_EL[mewa] === 'โลหะ' ? 'Clear quartz, Pearl, silver-white' : 'Citrine, Amber, golden-yellow'}.`,
             currentYearTh: `ปี 2026 (ในปฏิทินทิเบต คือปีม้าไฟ) — ${MEWA_EL[mewa] === 'ไฟ' || MEWA_EL[mewa] === 'ดิน' ? 'ปีนี้จะหล่อเลี้ยงพลัง Mewa ของคุณ เหมาะสำหรับการก้าวไปข้างหน้าและการริเริ่ม' : MEWA_EL[mewa] === 'น้ำ' || MEWA_EL[mewa] === 'โลหะ' ? 'ปีนี้ท้าทายสำหรับ Mewa ของคุณ ควรโฟกัสที่การรักษาและการเรียนรู้ มากกว่าการขยาย' : 'ปีนี้ให้พลังสมดุล — ใช้ได้ทั้งรุกและรับตามสถานการณ์'} พระลามะแนะนำให้จัดพิธีเล็กๆ ในวันเกิดปี 2026 ของคุณเพื่อ "ทบทวน Parkha" ก่อนเริ่มปีใหม่`,
