@@ -36,6 +36,13 @@ import {
   type BirthData,
 } from './engine-wrapper.js';
 
+// ช่อง reading ของเอนจินเป็น HTML ของหน้าเว็บ (inline style) — ส่งให้เอเจนต์เป็นข้อความล้วน
+const htmlToPlain = (_k: string, v: unknown) => (typeof v === 'string' && /<[a-z][^>]*>/i.test(v))
+  ? v.replace(/<(br|\/div|\/p|\/li|\/h\d)[^>]*>/gi, '\n').replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+      .replace(/[ \t]+/g, ' ').replace(/\n\s*\n+/g, '\n').trim()
+  : v;
+
 // Deity origin tradition (gods.json `mythology`) → live /pantheon/<slug> page.
 // Only the 9 pantheons with a published page are mapped; others fall back to
 // the pantheon index.
@@ -425,7 +432,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         return {
           content: [{
             type: 'text',
-            text: `${locNote}${correctionNote}# ${systemSlug} reading\n\n${JSON.stringify(systemData, null, 2)}\n\n` +
+            text: `${locNote}${correctionNote}# ${systemSlug} reading\n\n${JSON.stringify(systemData, htmlToPlain, 2)}\n\n` +
               `The side-by-side view of all 26 systems is on mythsensus.com.${timeNote}`,
           }],
         };
@@ -453,7 +460,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
               `**Deity:** ${blessing.deity}\n` +
               `**Mythology:** ${blessing.mythology ?? '—'}\n` +
               `**Tier:** ${blessing.tier ?? '—'}\n\n` +
-              `**Message:** ${blessing.message ?? '—'}\n\n` +
+              `**Message:** ${blessing.message ? blessing.message[0].toUpperCase() + blessing.message.slice(1) : '—'}\n\n` +
               `_Deterministic: same chart on the same day always draws the same deity._`,
           }],
         };
