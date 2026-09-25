@@ -78,9 +78,8 @@ const TOOLS: Tool[] = [
       'Deterministic: same input always returns the same output. ' +
       'Optionally pass systems[] (typo-tolerant) to focus the preview on ' +
       'specific traditions, and time_known:false when the birth time is unknown. ' +
-      'Returns a free 5-of-26 consensus preview; the complete 26-system reading ' +
-      'is free at mythsensus.com and the 43-page Cosmic Blueprint PDF is the ' +
-      'paid upgrade (mythsensus.com/pricing, $19 one-time).',
+      'Returns a free 5-of-26 consensus preview; the complete 26-system ' +
+      'side-by-side reading is on mythsensus.com.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -109,8 +108,7 @@ const TOOLS: Tool[] = [
       "onmyodo, hellenistic, norseRune, ogham, arabicParts, kabbalistic, " +
       'zoroastrian, aztec, nativeAmerican, ifaYoruba, aboriginal, biorhythm, ' +
       'vedicMahadasha, thaiBrahmin). Returns the raw per-system output from ' +
-      'the engine. For the full multi-page Cosmic Blueprint PDF, visit ' +
-      'mythsensus.com/pricing ($19 one-time).',
+      'the engine. The side-by-side view of all 26 systems is on mythsensus.com.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -215,6 +213,10 @@ const TOOLS: Tool[] = [
     },
   },
 ];
+// 25 ก.ย. 69 — annotations ตรงกับ api/mcp.js ของเว็บ: ทุก tool อ่านอย่างเดียว ไม่เขียน ไม่ลบ ไม่ดึงเว็บนอก
+for (const t of TOOLS) {
+  t.annotations = { title: t.name.replace(/_/g, ' '), readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false, ...(t.annotations || {}) };
+}
 
 // ── Engine metadata (returned by about_mythsensus_engine) ───────────
 
@@ -241,12 +243,9 @@ const ENGINE_INFO = {
     llm_narrative: 'Reading text uses LLM for natural-language phrasing only; the numbers (Cosmic Score, stem-branch, nakshatra) come from the deterministic algorithm.',
   },
   open_source: 'The compiled engine is already public — it ships client-side in the mythsensus.com browser bundle and as this MIT-licensed npm package, so the math is fully inspectable. The algorithm is not treated as a secret; the durable edge is weight calibration + 1,069-deity curation + 43-page synthesis depth. Annotated TypeScript source is being opened on GitHub.',
-  pricing: {
-    free: 'Cosmic Score + 5-system consensus preview via MCP (bazi, vedic, western, ninestar, thai); full 26-system reading + daily blessing + 108 Organum oracle + offline use free at mythsensus.com',
-    deep_reading_one_time: '$9 per system',
-    full_report_one_time: '$19 (43-page PDF Cosmic Blueprint, all 26 systems)',
-    subscription: '$8.99/month (daily-refresh features, 7-day trial, refund within 14 days)',
-  },
+  // 25 ก.ย. 69 — ถอดราคาออกจากคำตอบ tool (ตรงกับ api/mcp.js ของเว็บ): ร้านแอป ChatGPT ไม่รับแอปที่พาไปซื้อของดิจิทัล
+  //   และราคาเดิมผิด (full report เขียน $19 · Gumroad ขายจริง $59)
+  access: 'Cosmic Score + 5-system consensus preview via MCP (bazi, vedic, western, ninestar, thai); the full 26-system side-by-side reading is on mythsensus.com',
   mcp_repo: 'https://github.com/PattrickChenforclaudeuse/mythsensus-mcp',
   npm_package: 'mythsensus-mcp',
 };
@@ -373,7 +372,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           time: timeDisclosure(timeKnown),
           systems_in_preview: shownCount,
           systems_total: 26,
-          full_consensus: `This is a ${shownCount}-of-26 consensus preview. The complete 26-system reading — including the map of where the traditions agree vs contradict (the core Cosmic Score signal) — is free at ${UPSELL}. Per-system deep readings and the 43-page Cosmic Blueprint PDF are the paid layer (${link('/pricing')}).`,
+          full_consensus: `This is a ${shownCount}-of-26 consensus preview. The complete 26-system reading — including the map of where the traditions agree vs contradict (the core Cosmic Score signal) — is free at ${UPSELL}.`,
         };
         if (Object.keys(selection).length > 0) preview.selection = selection;
         if (location.resolved || location.note) preview.location = location;
@@ -409,7 +408,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           return {
             content: [{
               type: 'text',
-              text: `${locNote}${correctionNote}Deep reading for "${systemSlug}" is part of the full 26-system experience at ${UPSELL}. The free MCP tier includes deep readings for: ${FREE_PREVIEW_SYSTEMS.join(', ')}. For all 26 systems + the 43-page synthesis, see ${link('/pricing')}.`,
+              text: `${locNote}${correctionNote}Deep reading for "${systemSlug}" is part of the full 26-system experience at ${UPSELL}. The free MCP tier includes deep readings for: ${FREE_PREVIEW_SYSTEMS.join(', ')}.`,
             }],
           };
         }
@@ -427,8 +426,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           content: [{
             type: 'text',
             text: `${locNote}${correctionNote}# ${systemSlug} reading\n\n${JSON.stringify(systemData, null, 2)}\n\n` +
-              `For the full 43-page Cosmic Blueprint PDF synthesising all 26 systems, ` +
-              `visit https://mythsensus.com/pricing ($19 one-time).${timeNote}`,
+              `The side-by-side view of all 26 systems is on mythsensus.com.${timeNote}`,
           }],
         };
       }
