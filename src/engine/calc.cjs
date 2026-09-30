@@ -4115,7 +4115,9 @@ function calcLifeTerrain(d, dmElement) {
     }
     const SHENG = { Wood: 'Fire', Fire: 'Earth', Earth: 'Metal', Metal: 'Water', Water: 'Wood' };
     const EL_EN = { 'ไม้': 'Wood', 'ไฟ': 'Fire', 'ดิน': 'Earth', 'โลหะ': 'Metal', 'น้ำ': 'Water' };
-    const dmElEn = EL_EN[dmElement] ?? 'Fire';
+    // 29 ก.ย. 69: dayMasterElement เปลี่ยนภาษาตาม UI ('Metal' ในโหมดอังกฤษ) — เดิมหาในตารางคีย์ไทยไม่เจอแล้วตกเป็น 'Fire'
+    //   ⇒ ผู้ใช้ฉบับอังกฤษได้คะแนนที่อยู่/สายงานของคนธาตุไฟทุกคน (ฟ้า ธาตุโลหะ: ไทย+การตลาด TH 736 / EN 778)
+    const dmElEn = EL_EN[dmElement] ?? (['Wood', 'Fire', 'Earth', 'Metal', 'Water'].includes(dmElement) ? dmElement : 'Fire');
     const workCountry = d.workCountry ?? d.birthCountry ?? 'Thailand';
     const countryEl = COUNTRY_ELEMENT[workCountry] ?? 'Wood';
     const countryBase = COUNTRY_SCORE[workCountry] ?? 720;
@@ -4131,7 +4133,7 @@ function calcLifeTerrain(d, dmElement) {
     else if (SHENG[countryEl] === 'Water' && dmElEn === 'Fire')
         alignBonus = -30; // conflicts
     const score = Math.min(950, Math.max(400, countryBase + levelBonus + alignBonus));
-    const detail = `${workCountry} (${countryEl}) ${alignBonus >= 60 ? '→ หนุน' : alignBonus >= 30 ? '→ เข้ากัน' : alignBonus >= 0 ? '→ กลาง' : '→ กดดัน'} Day Master ${dmElEn} | ระดับ ${d.careerLevel ?? 'Mid'} (${levelBonus >= 0 ? '+' : ''}${levelBonus})`;
+    const detail = `${workCountry} (${countryEl}) ${d.lang === 'en' ? (alignBonus >= 60 ? '→ supports' : alignBonus >= 30 ? '→ matches' : alignBonus >= 0 ? '→ neutral' : '→ strains') : (alignBonus >= 60 ? '→ หนุน' : alignBonus >= 30 ? '→ เข้ากัน' : alignBonus >= 0 ? '→ กลาง' : '→ กดดัน')} Day Master ${dmElEn} | ${d.lang === 'en' ? 'Level' : 'ระดับ'} ${d.careerLevel ?? 'Mid'} (${levelBonus >= 0 ? '+' : ''}${levelBonus})`;
     return { score, detail };
 }
 exports.calcLifeTerrain = calcLifeTerrain;
@@ -4184,7 +4186,9 @@ function calcPathResonance(d, dmElement) {
     }
     const SHENG = { Wood: 'Fire', Fire: 'Earth', Earth: 'Metal', Metal: 'Water', Water: 'Wood' };
     const EL_EN = { 'ไม้': 'Wood', 'ไฟ': 'Fire', 'ดิน': 'Earth', 'โลหะ': 'Metal', 'น้ำ': 'Water' };
-    const dmElEn = EL_EN[dmElement] ?? 'Fire';
+    // 29 ก.ย. 69: dayMasterElement เปลี่ยนภาษาตาม UI ('Metal' ในโหมดอังกฤษ) — เดิมหาในตารางคีย์ไทยไม่เจอแล้วตกเป็น 'Fire'
+    //   ⇒ ผู้ใช้ฉบับอังกฤษได้คะแนนที่อยู่/สายงานของคนธาตุไฟทุกคน (ฟ้า ธาตุโลหะ: ไทย+การตลาด TH 736 / EN 778)
+    const dmElEn = EL_EN[dmElement] ?? (['Wood', 'Fire', 'Earth', 'Metal', 'Water'].includes(dmElement) ? dmElement : 'Fire');
     const domain = d.domain ?? 'Business Development';
     const industry = d.industry ?? 'Interior Construction';
     const domainEl = DOMAIN_ELEMENT[domain] ?? 'Fire';
@@ -4209,8 +4213,10 @@ function calcPathResonance(d, dmElement) {
     // These were the raw enum names (DM_CREATES / SAME / DM_SUPPORTED), rendered
     // straight into the finance page — a variable name handed over as investment
     // guidance.
-    const relation = SHENG[dmElEn] === domainEl ? 'ธาตุคุณหล่อเลี้ยงสายงานนี้ (เหมาะสูงสุด)' :
-        domainEl === dmElEn ? 'ธาตุเดียวกับคุณ (เข้ากัน)' : SHENG[domainEl] === dmElEn ? 'สายงานนี้หล่อเลี้ยงธาตุคุณ (ถูกหนุน)' : 'ต่างธาตุ';
+    const relation = d.lang === 'en'
+        ? (SHENG[dmElEn] === domainEl ? 'your element feeds this work (best fit)' : domainEl === dmElEn ? 'same element as you (good fit)' : SHENG[domainEl] === dmElEn ? 'this work feeds your element (supported)' : 'different elements')
+        : SHENG[dmElEn] === domainEl ? 'ธาตุคุณหล่อเลี้ยงสายงานนี้ (เหมาะสูงสุด)' :
+            domainEl === dmElEn ? 'ธาตุเดียวกับคุณ (เข้ากัน)' : SHENG[domainEl] === dmElEn ? 'สายงานนี้หล่อเลี้ยงธาตุคุณ (ถูกหนุน)' : 'ต่างธาตุ';
     const detail = `Domain: ${domain} (${domainEl}) | Industry: ${industry} (${industryEl}) | Relation: ${relation}`;
     return { score, detail };
 }
@@ -6090,7 +6096,8 @@ function calcDailyPulse(c, date, opts = {}) {
         velocity: 'daily',
     });
     // 3. Vedic Moon nakshatra today (Tara Bala)
-    const AYANAMSA = 24;
+    // 30 ก.ย. 69: เดิมตายตัว 24° แต่นักษัตรเกิด (c.vedic) ใช้ lahiriAyanamsa ⇒ สองฝั่งคนละฐาน ~0.2° · ใกล้รอยต่อนักษัตรนับตาราผิดช่องได้
+    const AYANAMSA = lahiriAyanamsa(date.getFullYear(), date.getMonth() + 1, date.getDate());
     const sidMoon = mod360(moonLon - AYANAMSA);
     const todayNakIdx = Math.floor(sidMoon / (360 / 27));
     const natalNakName = c.vedic.moonNakshatra;
@@ -6861,7 +6868,8 @@ function _fcDaySignals(c, date, x) {
             doctrineTh: 'สิบเทพ 十神 — ความสัมพันธ์ของก้านวันกับ Day Master',
             doctrineEn: 'Ten Gods (十神) — the day stem read against the natal Day Master',
             velocity: 'daily', dom,
-            noteTh: `วัน ${dayP.stem}${dayP.branch} ธาตุ${_EL_TH_OF[dEl] || dEl} ต่อ Day Master ธาตุ${_EL_TH_OF[dmEl] || dmEl} = ${godTh}`,
+            // 30 ก.ย. 69: ธาตุเจ้าชะตาใส่ในวงเล็บ ไม่ขึ้นต้น "ธาตุ" — วลีนี้ซ้ำทุกวันที่ยกมาในหน้าเดียว ("ธาตุไม้" 5 ครั้ง ชน test:prose)
+            noteTh: `วัน ${dayP.stem}${dayP.branch} ธาตุ${_EL_TH_OF[dEl] || dEl} ต่อ Day Master ของคุณ (${_EL_TH_OF[dmEl] || dmEl}) = ${godTh}`,
             noteEn: `Day ${dayP.stem}${dayP.branch} (${dEl}) against your ${dmEl} Day Master = ${godEn}`,
         });
     }
@@ -6889,7 +6897,7 @@ function _fcDaySignals(c, date, x) {
     // not a statement about any single life area, so it lands on every domain
     // evenly and at reduced weight.
     {
-        const AYANAMSA = 24;
+        const AYANAMSA = lahiriAyanamsa(date.getFullYear(), date.getMonth() + 1, date.getDate()); // 30 ก.ย. 69: เดิมตายตัว 24° (ต่างฐานกับนักษัตรเกิด)
         const sidMoon = mod360(mod360(moonLongitude(jd)) - AYANAMSA);
         const todayNak = Math.floor(sidMoon / (360 / 27));
         const taraIdx = ((todayNak - x.natalNakIdx) % 9 + 9) % 9;

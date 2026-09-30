@@ -300,7 +300,7 @@ function buildBirthContext(a: Record<string, any>): {
 const server = new Server(
   {
     name: 'mythsensus-mcp',
-    version: '0.3.2',
+    version: '0.3.16',
   },
   {
     capabilities: { tools: {} },
