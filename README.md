@@ -106,8 +106,8 @@ After install, ask Claude:
 - *"Who is Amaterasu?"* / *"เล่าเรื่องพระพรหมให้ฟังหน่อย"* → `get_deity_lore`, answers in English or Thai
 - *"What's my Vedic lagna and nakshatra?"* (add a birth time and city for an accurate ascendant)
 
-Sample report (Sunthorn Phu, Thai national poet b.1786, free preview of the
-$19 product): https://mythsensus.com/sample-report?utm_source=mcp&utm_medium=readme
+Sample report (Sunthorn Phu, Thai national poet b.1786, a free preview of the
+full report): https://mythsensus.com/sample-report?utm_source=mcp&utm_medium=readme
 
 ## Engineering honesty — current engine limitations
 
@@ -115,9 +115,9 @@ This MCP exposes Mythsensus engine **v1**. Honest limitations:
 
 | Area | Current state | v2 plan (Q3-Q4 2026) |
 |---|---|---|
-| **Vedic ayanamsa** | Lahiri hardcoded at `24.0°` (accurate ±10 arcmin for births 2020-2030) | Time-varying `lahiriAyanamsa(y,m,d)` formula |
+| **Vedic ayanamsa** | Natal chart uses a time-varying Lahiri value (IAU 2006 precession); the daily-pulse and forecast code still use a fixed `24°` (about 0.2° off in 2026) | Use the time-varying value everywhere |
 | **BaZi solar terms** | Month-boundary approximation (~5% of births within ±48h of a solar term may get wrong month pillar) | Precise jiéqì calculator (VSOP87-based) |
-| **Western planet positions** | Custom trigonometric series (good for Sun + Mercury/Venus, arc-minute drift on outer planets) | Jean Meeus astronomical algorithms port |
+| **Western planet positions** | Geocentric positions from Schlyter's orbital elements with a Kepler solve (about 1–2 arcminutes); Moon from the main Meeus lunar terms | Full Meeus / VSOP87 port for arc-second precision |
 | **Jyotish divisional charts** | Not implemented (no Navamsha, no Shadbala, no Ashtakavarga, no yoga ID) | Navamsha + Shadbala + yoga ID |
 | **Weight calibration** | Internal-consistency optimization (no supervised ground truth — astrology has no labeled "correct archetype" dataset) | Disclosure remains; methodology stays honest about this |
 
