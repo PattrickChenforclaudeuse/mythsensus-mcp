@@ -80,6 +80,14 @@ Config location:
 - **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
 
+### Option C — Gemini CLI extension
+
+```bash
+gemini extensions install https://github.com/PattrickChenforclaudeuse/mythsensus-mcp
+```
+
+Runs the same npm server locally (Node.js 18+).
+
 ## Tools exposed
 
 | Tool | What it does |

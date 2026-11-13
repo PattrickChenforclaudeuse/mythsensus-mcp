@@ -1,0 +1,11 @@
+{
+  "name": "mythsensus",
+  "version": "0.3.17",
+  "description": "Read one birth date through 26 divination traditions and see where they agree.",
+  "mcpServers": {
+    "mythsensus": {
+      "command": "npx",
+      "args": ["-y", "mythsensus-mcp"]
+    }
+  }
+}
